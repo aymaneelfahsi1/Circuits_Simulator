@@ -1,4 +1,4 @@
-#Circuit Simulator
+
 
 ## **Overview**
 This Circuit Simulator is a graphical application built using Python's `tkinter` library. It provides a user-friendly interface for designing and simulating electrical circuits. Users can place components, connect them with wires, and simulate the circuit to calculate node voltages and current through components.
