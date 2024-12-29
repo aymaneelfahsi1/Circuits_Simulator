@@ -1,117 +1,72 @@
-2024-12-29 23:15:43,606 - DEBUG - Cleared all selections
-2024-12-29 23:15:43,607 - DEBUG - Tool set to current_source
-2024-12-29 23:15:43,855 - DEBUG - Placing component: current_source at (357.0, 247.0)
-2024-12-29 23:15:43,855 - DEBUG - Added element: <current_source I1, value=1.0, nodes=[None, None]>
-2024-12-29 23:15:43,856 - DEBUG - Placed component: I1
-2024-12-29 23:15:45,774 - DEBUG - Cleared all selections
-2024-12-29 23:15:45,774 - DEBUG - Tool set to resistor
-2024-12-29 23:15:46,150 - DEBUG - Placing component: resistor at (307.0, 187.0)
-2024-12-29 23:15:46,150 - DEBUG - Added element: <resistor R1, value=1000.0, nodes=[None, None]>
-2024-12-29 23:15:46,151 - DEBUG - Placed component: R1
-2024-12-29 23:15:47,470 - DEBUG - Cleared all selections
-2024-12-29 23:15:47,470 - DEBUG - Tool set to wire
-2024-12-29 23:15:48,222 - DEBUG - Wire start set to R1 terminal 1
-2024-12-29 23:15:48,903 - DEBUG - Biggest node found: 0
-2024-12-29 23:15:48,903 - DEBUG - Added element: <Wire R1-T1 to I1-T1>
-2024-12-29 23:15:48,903 - DEBUG - Created and added wire: <Wire R1-T1 to I1-T1>
-2024-12-29 23:15:49,847 - DEBUG - Wire start set to R1 terminal 0
-2024-12-29 23:15:50,414 - DEBUG - Biggest node found: 1
-2024-12-29 23:15:50,414 - DEBUG - Added element: <Wire R1-T0 to I1-T0>
-2024-12-29 23:15:50,415 - DEBUG - Created and added wire: <Wire R1-T0 to I1-T0>
-2024-12-29 23:15:52,429 - ERROR - Simulation failed: No ground connection detected.
-2024-12-29 23:15:53,390 - DEBUG - Cleared all selections
-2024-12-29 23:15:53,390 - DEBUG - Tool set to ground
-2024-12-29 23:15:53,653 - DEBUG - Placing component: ground at (492.0, 332.0)
-2024-12-29 23:15:53,653 - DEBUG - Created ground with canvas IDs: [12, 13, 14]
-2024-12-29 23:15:55,407 - DEBUG - Cleared all selections
-2024-12-29 23:15:55,407 - DEBUG - Tool set to wire
-2024-12-29 23:15:56,110 - DEBUG - Wire start set to Ground terminal 1
-2024-12-29 23:15:56,877 - DEBUG - Merged node 1 into node 0
-2024-12-29 23:15:56,877 - DEBUG - Propagated ground connection.
-2024-12-29 23:15:56,877 - DEBUG - Added element: <Wire Ground-T1 to I1-T1>
-2024-12-29 23:15:56,877 - DEBUG - Created and added wire: <Wire Ground-T1 to I1-T1>
-2024-12-29 23:15:58,005 - DEBUG - Mapped node 2 to matrix index 0
-2024-12-29 23:15:58,005 - DEBUG - Stamping resistor R1 between nodes 2 and 0 with conductance 0.001
-2024-12-29 23:15:58,006 - DEBUG - Stamping current source I1 from node 2 to node 0 with value 1.0
-2024-12-29 23:15:58,006 - DEBUG - Conductance Matrix A:
-[[0.001]]
-2024-12-29 23:15:58,006 - DEBUG - Source Vector z:
+2024-12-29 23:29:36,404 - DEBUG - Cleared all selections
+2024-12-29 23:29:36,404 - DEBUG - Tool set to current_source
+2024-12-29 23:29:36,669 - DEBUG - Placing component: current_source at (304.0, 193.0)
+2024-12-29 23:29:36,669 - DEBUG - Added element: <current_source I1, value=1.0, nodes=[None, None]>
+2024-12-29 23:29:36,670 - DEBUG - Placed component: I1
+2024-12-29 23:29:39,412 - DEBUG - Cleared all selections
+2024-12-29 23:29:39,412 - DEBUG - Tool set to resistor
+2024-12-29 23:29:39,915 - DEBUG - Placing component: resistor at (329.0, 135.0)
+2024-12-29 23:29:39,915 - DEBUG - Added element: <resistor R1, value=1000.0, nodes=[None, None]>
+2024-12-29 23:29:39,915 - DEBUG - Placed component: R1
+2024-12-29 23:29:40,949 - DEBUG - Placing component: resistor at (223.0, 94.0)
+2024-12-29 23:29:40,949 - DEBUG - Added element: <resistor R2, value=1000.0, nodes=[None, None]>
+2024-12-29 23:29:40,949 - DEBUG - Placed component: R2
+2024-12-29 23:29:42,364 - DEBUG - Cleared all selections
+2024-12-29 23:29:42,364 - DEBUG - Tool set to wire
+2024-12-29 23:29:44,197 - DEBUG - No terminal found under cursor; resetting wire start
+2024-12-29 23:29:44,717 - DEBUG - Wire start set to R1 terminal 0
+2024-12-29 23:29:48,036 - DEBUG - Cleared all selections
+2024-12-29 23:29:48,036 - DEBUG - Tool set to wire
+2024-12-29 23:29:49,164 - DEBUG - Wire start set to R1 terminal 0
+2024-12-29 23:29:50,028 - DEBUG - Biggest node found: 0
+2024-12-29 23:29:50,029 - DEBUG - Added element: <Wire R1-T0 to I1-T0>
+2024-12-29 23:29:50,029 - DEBUG - Created and added wire: <Wire R1-T0 to I1-T0>
+2024-12-29 23:29:51,308 - DEBUG - Wire start set to R2 terminal 0
+2024-12-29 23:29:52,061 - DEBUG - Added element: <Wire R2-T0 to R1-T0>
+2024-12-29 23:29:52,061 - DEBUG - Created and added wire: <Wire R2-T0 to R1-T0>
+2024-12-29 23:29:52,917 - DEBUG - Wire start set to R2 terminal 1
+2024-12-29 23:29:53,532 - DEBUG - Biggest node found: 1
+2024-12-29 23:29:53,533 - DEBUG - Added element: <Wire R2-T1 to R1-T1>
+2024-12-29 23:29:53,533 - DEBUG - Created and added wire: <Wire R2-T1 to R1-T1>
+2024-12-29 23:29:54,150 - DEBUG - Wire start set to R1 terminal 1
+2024-12-29 23:29:54,645 - DEBUG - Added element: <Wire R1-T1 to I1-T1>
+2024-12-29 23:29:54,645 - DEBUG - Created and added wire: <Wire R1-T1 to I1-T1>
+2024-12-29 23:29:55,740 - DEBUG - Cleared all selections
+2024-12-29 23:29:55,740 - DEBUG - Tool set to ground
+2024-12-29 23:29:56,172 - DEBUG - Placing component: ground at (432.0, 71.0)
+2024-12-29 23:29:56,172 - DEBUG - Created ground with canvas IDs: [18, 19, 20]
+2024-12-29 23:29:58,028 - DEBUG - Cleared all selections
+2024-12-29 23:29:58,028 - DEBUG - Tool set to wire
+2024-12-29 23:29:58,764 - DEBUG - Wire start set to Ground terminal 1
+2024-12-29 23:29:59,453 - DEBUG - Merged node 2 into node 0
+2024-12-29 23:29:59,453 - DEBUG - Propagated ground connection.
+2024-12-29 23:29:59,453 - DEBUG - Added element: <Wire Ground-T1 to R1-T1>
+2024-12-29 23:29:59,453 - DEBUG - Created and added wire: <Wire Ground-T1 to R1-T1>
+2024-12-29 23:30:00,628 - DEBUG - Mapped node 1 to matrix index 0
+2024-12-29 23:30:00,629 - DEBUG - Stamping resistor R1 between nodes 1 and 0 with conductance 0.001
+2024-12-29 23:30:00,629 - DEBUG - Stamping resistor R2 between nodes 1 and 0 with conductance 0.001
+2024-12-29 23:30:00,629 - DEBUG - Stamping current source I1 from node 1 to node 0 with value 1.0
+2024-12-29 23:30:00,629 - DEBUG - Conductance Matrix A:
+[[0.002]]
+2024-12-29 23:30:00,629 - DEBUG - Source Vector z:
 [-1.]
-2024-12-29 23:15:58,011 - DEBUG - Solved vector x:
-[-1000.]
-2024-12-29 23:15:58,011 - DEBUG - Node Voltages: [-1000.]
-2024-12-29 23:15:58,011 - DEBUG - Voltage Source Currents: []
-2024-12-29 23:15:58,011 - DEBUG - Node 2 positioned at (307.0, 217.0)
-2024-12-29 23:15:58,011 - DEBUG - Created label for Node 2 at (307.0, 202.0) with voltage -1000.00 V and color darkblue
-2024-12-29 23:15:58,012 - DEBUG - Created label for Ground node at (492.0, 362.0)
-2024-12-29 23:15:58,012 - DEBUG - Element I1: V1 = -1000.0000000 V, V2 = 0.0000000 V
-2024-12-29 23:15:58,012 - DEBUG - Current Source I1: Defined current = 1.0000000 A
-2024-12-29 23:15:58,012 - DEBUG - Element I1: Current direction is from Node 2 to Node 0.
-2024-12-29 23:15:58,012 - DEBUG - Drew current arrow on component I1 with current 1.0000000 A
-2024-12-29 23:15:58,012 - DEBUG - Element R1: V1 = -1000.0000000 V, V2 = 0.0000000 V
-2024-12-29 23:15:58,013 - DEBUG - Resistor R1: Calculated current = -1.0000000 A
-2024-12-29 23:15:58,013 - DEBUG - Element R1: Current direction is from Node 0 to Node 2.
-2024-12-29 23:15:58,013 - DEBUG - Drew current arrow on component R1 with current -1.0000000 A
-2024-12-29 23:15:58,016 - DEBUG - Simulation completed successfully.
-2024-12-29 23:16:04,150 - DEBUG - Cleared all selections
-2024-12-29 23:16:04,150 - DEBUG - Tool set to resistor
-2024-12-29 23:16:04,654 - DEBUG - Placing component: resistor at (393.0, 178.0)
-2024-12-29 23:16:04,654 - DEBUG - Added element: <resistor R2, value=1000.0, nodes=[None, None]>
-2024-12-29 23:16:04,655 - DEBUG - Placed component: R2
-2024-12-29 23:16:06,190 - DEBUG - Cleared all selections
-2024-12-29 23:16:06,190 - DEBUG - Tool set to wire
-2024-12-29 23:16:06,960 - DEBUG - Wire start set to R1 terminal 1
-2024-12-29 23:16:07,663 - DEBUG - Propagated ground connection.
-2024-12-29 23:16:07,663 - DEBUG - Added element: <Wire R1-T1 to R2-T0>
-2024-12-29 23:16:07,663 - DEBUG - Created and added wire: <Wire R1-T1 to R2-T0>
-2024-12-29 23:16:08,342 - DEBUG - Wire start set to R2 terminal 1
-2024-12-29 23:16:09,094 - DEBUG - Merged node 2 into node 0
-2024-12-29 23:16:09,094 - DEBUG - Propagated ground connection.
-2024-12-29 23:16:09,095 - DEBUG - Added element: <Wire R2-T1 to R1-T0>
-2024-12-29 23:16:09,095 - DEBUG - Created and added wire: <Wire R2-T1 to R1-T0>
-2024-12-29 23:16:10,599 - DEBUG - Merged nodes 0 and 0 via wire.
-2024-12-29 23:16:10,599 - DEBUG - Merged nodes 0 and 0 via wire.
-2024-12-29 23:16:10,599 - DEBUG - Merged nodes 0 and 0 via wire.
-2024-12-29 23:16:10,599 - DEBUG - Stamping resistor R1 between nodes 0 and 0 with conductance 0.001
-2024-12-29 23:16:10,599 - DEBUG - Stamping resistor R2 between nodes 0 and 0 with conductance 0.001
-2024-12-29 23:16:10,599 - DEBUG - Stamping current source I1 from node 0 to node 0 with value 1.0
-2024-12-29 23:16:10,599 - DEBUG - Conductance Matrix A:
-[]
-2024-12-29 23:16:10,599 - DEBUG - Source Vector z:
-[]
-2024-12-29 23:16:10,599 - ERROR - Error computing matrix rank: zero-size array to reduction operation maximum which has no identity
-2024-12-29 23:16:11,756 - ERROR - Simulation failed: Singular matrix encountered.
-2024-12-29 23:16:14,422 - DEBUG - Cleared all selections
-2024-12-29 23:16:14,422 - DEBUG - Tool set to select
-2024-12-29 23:16:15,023 - DEBUG - Cleared all selections
-2024-12-29 23:16:15,023 - DEBUG - Highlighted wire <Wire Ground-T1 to I1-T1>
-2024-12-29 23:16:15,024 - DEBUG - Selected wire <Wire Ground-T1 to I1-T1>
-2024-12-29 23:16:16,791 - DEBUG - Unhighlighted wire <Wire Ground-T1 to I1-T1>
-2024-12-29 23:16:16,791 - DEBUG - Cleared all selections
-2024-12-29 23:16:16,791 - DEBUG - Highlighted wire <Wire Ground-T1 to I1-T1>
-2024-12-29 23:16:16,791 - DEBUG - Selected wire <Wire Ground-T1 to I1-T1>
-2024-12-29 23:16:18,110 - DEBUG - Unhighlighted wire <Wire Ground-T1 to I1-T1>
-2024-12-29 23:16:18,110 - DEBUG - Cleared all selections
-2024-12-29 23:16:18,110 - DEBUG - Highlighted wire <Wire R2-T1 to R1-T0>
-2024-12-29 23:16:18,110 - DEBUG - Selected wire <Wire R2-T1 to R1-T0>
-2024-12-29 23:16:19,086 - DEBUG - Unhighlighted wire <Wire R2-T1 to R1-T0>
-2024-12-29 23:16:19,086 - DEBUG - Cleared all selections
-2024-12-29 23:16:19,086 - DEBUG - Started box selection
-2024-12-29 23:16:20,390 - DEBUG - Cleared all selections
-2024-12-29 23:16:20,390 - DEBUG - Tool set to wire
-2024-12-29 23:16:21,270 - DEBUG - Wire start set to R2 terminal 1
-2024-12-29 23:16:22,157 - DEBUG - Propagated ground connection.
-2024-12-29 23:16:22,157 - DEBUG - Added element: <Wire R2-T1 to Ground-T1>
-2024-12-29 23:16:22,157 - DEBUG - Created and added wire: <Wire R2-T1 to Ground-T1>
-2024-12-29 23:16:23,110 - DEBUG - Merged nodes 0 and 0 via wire.
-2024-12-29 23:16:23,110 - DEBUG - Merged nodes 0 and 0 via wire.
-2024-12-29 23:16:23,110 - DEBUG - Merged nodes 0 and 0 via wire.
-2024-12-29 23:16:23,110 - DEBUG - Stamping resistor R1 between nodes 0 and 0 with conductance 0.001
-2024-12-29 23:16:23,110 - DEBUG - Stamping resistor R2 between nodes 0 and 0 with conductance 0.001
-2024-12-29 23:16:23,110 - DEBUG - Stamping current source I1 from node 0 to node 0 with value 1.0
-2024-12-29 23:16:23,110 - DEBUG - Conductance Matrix A:
-[]
-2024-12-29 23:16:23,110 - DEBUG - Source Vector z:
-[]
-2024-12-29 23:16:23,110 - ERROR - Error computing matrix rank: zero-size array to reduction operation maximum which has no identity
-2024-12-29 23:16:30,047 - ERROR - Simulation failed: Singular matrix encountered.
+2024-12-29 23:30:00,630 - DEBUG - Solved vector x:
+[-500.]
+2024-12-29 23:30:00,630 - DEBUG - Node Voltages: [-500.]
+2024-12-29 23:30:00,630 - DEBUG - Voltage Source Currents: []
+2024-12-29 23:30:00,630 - DEBUG - Node 1 positioned at (260.3333333333333, 140.66666666666666)
+2024-12-29 23:30:00,631 - DEBUG - Created label for Node 1 at (260.3333333333333, 125.66666666666666) with voltage -500.00 V and color darkblue
+2024-12-29 23:30:00,631 - DEBUG - Created label for Ground node at (432.0, 101.0)
+2024-12-29 23:30:00,631 - DEBUG - Element I1: V1 = -500.00 V, V2 = 0.00 V
+2024-12-29 23:30:00,632 - DEBUG - Current Source I1: Defined current = 1.00 A
+2024-12-29 23:30:00,632 - DEBUG - Element I1: Current direction is from Node 1 to Node 0.
+2024-12-29 23:30:00,632 - DEBUG - Drew current arrow on component I1 with current 1.00 A
+2024-12-29 23:30:00,632 - DEBUG - Element R1: V1 = -500.00 V, V2 = 0.00 V
+2024-12-29 23:30:00,632 - DEBUG - Resistor R1: Calculated current = -0.50 A
+2024-12-29 23:30:00,632 - DEBUG - Element R1: Current direction is from Node 0 to Node 1.
+2024-12-29 23:30:00,632 - DEBUG - Drew current arrow on component R1 with current -0.50 A
+2024-12-29 23:30:00,633 - DEBUG - Element R2: V1 = -500.00 V, V2 = 0.00 V
+2024-12-29 23:30:00,633 - DEBUG - Resistor R2: Calculated current = -0.50 A
+2024-12-29 23:30:00,633 - DEBUG - Element R2: Current direction is from Node 0 to Node 1.
+2024-12-29 23:30:00,633 - DEBUG - Drew current arrow on component R2 with current -0.50 A
+2024-12-29 23:30:00,636 - DEBUG - Simulation completed successfully.
