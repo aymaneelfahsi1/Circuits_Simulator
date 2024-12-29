@@ -25,3 +25,6 @@ This Circuit Simulator is a graphical application built using Python's `tkinter`
    ```bash
    git clone <repository-url>
    cd advanced-circuit-simulator
+## **Status**
+
+This application is still in early stages... 
