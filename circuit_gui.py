@@ -1248,19 +1248,7 @@ class CircuitGUI(tk.Tk):
                 self.canvas.delete(arrow_id)
             comp['current_arrows'] = []
 
-    # -----------------------------------------------------------------------------------
-    # find_wire_by_item => already defined earlier
-    # -----------------------------------------------------------------------------------
-
-    # -----------------------------------------------------------------------------------
-    # Wire Class is now integrated as CircuitElement
-    # -----------------------------------------------------------------------------------
-    # No additional code needed here since Wire is already handled
-
-    # -----------------------------------------------------------------------------------
-    # Additional Methods as per original code
-    # -----------------------------------------------------------------------------------
-    # (No changes needed beyond what's already been addressed)
+    
 
     def create_voltage_legend(self):
         """
