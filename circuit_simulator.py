@@ -1,6 +1,10 @@
 from union_find import UnionFind
 from circuit_elements import CircuitElement, Wire
 from imports import *
+import numpy as np
+import logging
+import tkinter as tk
+from tkinter import messagebox
 
 class CircuitSimulator:
     """
@@ -21,7 +25,9 @@ class CircuitSimulator:
     def build_union_find(self):
         """
         Merge nodes connected by wires using Union-Find.
+        (Reinitializes the union–find structure each time.)
         """
+        self.uf = UnionFind()  # Reset union-find structure
         for e in self.elements:
             if e.element_type == 'wire':
                 node1, node2 = e.nodes
@@ -83,16 +89,13 @@ class CircuitSimulator:
 
         # Identify floating nodes
         floating_nodes = all_nodes - connected
+        # (Uncomment the following lines to show a warning if floating nodes are detected.)
         # if floating_nodes:
         #     messagebox.showerror("Simulation Error", f"Floating nodes detected: {floating_nodes}")
-            
         #     logging.debug(f"All nodes: {all_nodes}")
         #     logging.debug(f"Connected nodes: {connected}")
         #     logging.debug(f"Floating nodes detected: {floating_nodes}")
-
         #     return floating_nodes
-    
-    
         return None
 
     def stamp_matrices(self):
@@ -110,7 +113,10 @@ class CircuitSimulator:
         z = np.zeros(n)
 
         def n_idx(node_id):
-            return self.node_map.get(node_id, None) if node_id != 0 else None
+            if node_id == 0:
+                return None
+            return self.node_map.get(self.uf.find(node_id), None)
+
 
         # Stamp Resistors
         for e in self.elements:
@@ -200,7 +206,6 @@ class CircuitSimulator:
         except np.linalg.LinAlgError as e:
             logging.error(f"LinAlgError: {e}")
             messagebox.showerror("Simulation Error", "Circuit matrix is singular or ill-conditioned.")
-            # Additional debug info
             try:
                 rank = np.linalg.matrix_rank(A)
                 print(f"Matrix A Rank: {rank} / {A.shape[0]}")
@@ -215,4 +220,3 @@ class CircuitSimulator:
         logging.debug(f"Voltage Source Currents: {source_currents}")
 
         return node_voltages, source_currents
-

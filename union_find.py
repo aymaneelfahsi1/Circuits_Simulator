@@ -1,4 +1,4 @@
-from imports import *
+import logging
 
 class UnionFind:
     def __init__(self):
@@ -17,4 +17,3 @@ class UnionFind:
         if root1 != root2:
             self.parent[root2] = root1
             logging.debug(f"Union nodes {node1} and {node2}: {root1} <- {root2}")
-
