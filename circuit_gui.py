@@ -95,8 +95,8 @@ class CircuitGUI(tk.Tk):
         # Build UI on the left
         self.build_left_ui()
 
-        # # Create Voltage Legend
-        # self.create_voltage_legend()
+        # Create Voltage Legend
+        self.create_voltage_legend()
 
         # Canvas bindings
         self.canvas.bind("<Button-1>", self.on_left_down)
@@ -350,17 +350,16 @@ class CircuitGUI(tk.Tk):
 
     def save_circuit(self):
         """Save the current circuit state to a file."""
-        # Create a serializable circuit state.
         circuit_state = {
             "components": [],
             "wires": [],
             "comp_index": self.comp_index
         }
-        # For each component, store only the essential (non-canvas) data.
+        # For each component, store only the essential data (omit non‑serializable keys)
         for comp in self.components:
-            comp_copy = {key: comp[key] for key in comp if key not in ["canvas_items", "terminal_dot_ids", "abs_terminals"]}
+            comp_copy = { key: comp[key] for key in comp if key not in ["canvas_items", "terminal_dot_ids", "abs_terminals"] }
             circuit_state["components"].append(comp_copy)
-        # For each wire, store indices of the component references.
+        # For each wire, store the indices of the component references.
         for wire in self.wires:
             comp1_index = self.components.index(wire.comp1)
             comp2_index = self.components.index(wire.comp2)
@@ -372,12 +371,12 @@ class CircuitGUI(tk.Tk):
                 "term2_idx": wire.term2_idx
             }
             circuit_state["wires"].append(wire_copy)
-        # Ask user where to save
         file_path = filedialog.asksaveasfilename(defaultextension=".ckt", filetypes=[("Circuit Files", "*.ckt")])
         if file_path:
             with open(file_path, "wb") as f:
                 pickle.dump(circuit_state, f)
             logging.info(f"Circuit saved to {file_path}")
+
 
     def load_circuit(self):
         """Load a saved circuit state from a file."""
@@ -385,36 +384,61 @@ class CircuitGUI(tk.Tk):
         if file_path:
             with open(file_path, "rb") as f:
                 circuit_state = pickle.load(f)
-            # Clear existing components and wires
+            # Clear existing components and wires from the canvas
             for comp in self.components:
-                for item in comp["canvas_items"]:
+                for item in comp.get("canvas_items", []):
                     self.canvas.delete(item)
             for wire in self.wires:
                 self.canvas.delete(wire.canvas_id)
+            # Also clear the simulator’s element list:
+            self.simulator.elements = []
+            
             self.components = []
             self.wires = []
-            self.comp_index = circuit_state["comp_index"]
-
+            self.comp_index = circuit_state.get("comp_index", {"resistor": 0, "voltage_source": 0, "current_source": 0})
+            
             # Rebuild components.
             for comp_data in circuit_state["components"]:
                 comp = comp_data.copy()  # shallow copy is fine
+                # IMPORTANT: Reinitialize keys for GUI objects.
+                comp["canvas_items"] = []
+                comp["terminal_dot_ids"] = []
                 self.components.append(comp)
                 self.redraw_component(comp)
-
+                # *** NEW *** Re-add the component's underlying element to the simulator.
+                if "element" in comp and comp["element"] is not None:
+                    self.simulator.add_element(comp["element"])
+            
             # Rebuild wires using stored component indices.
             for wire_data in circuit_state["wires"]:
-                comp1 = self.components[wire_data["comp1_index"]]
-                comp2 = self.components[wire_data["comp2_index"]]
-                # Use current terminal positions to draw the wire.
-                x1, y1 = comp1["abs_terminals"][wire_data["term1_idx"]]
-                x2, y2 = comp2["abs_terminals"][wire_data["term2_idx"]]
+                try:
+                    comp1 = self.components[wire_data["comp1_index"]]
+                    comp2 = self.components[wire_data["comp2_index"]]
+                except IndexError:
+                    logging.error("Error loading wire: component index out of range.")
+                    continue
+                try:
+                    x1, y1 = comp1["abs_terminals"][wire_data["term1_idx"]]
+                    x2, y2 = comp2["abs_terminals"][wire_data["term2_idx"]]
+                except (KeyError, IndexError):
+                    logging.error("Error loading wire: terminal index out of range.")
+                    continue
                 wire_id = self.canvas.create_line(x1, y1, x2, y2, fill="gray", width=2)
-                wire_element = Wire(name=wire_data["name"], comp1=comp1, term1_idx=wire_data["term1_idx"],
-                                    comp2=comp2, term2_idx=wire_data["term2_idx"], canvas_id=wire_id)
+                wire_element = Wire(
+                    name=wire_data["name"],
+                    comp1=comp1,
+                    term1_idx=wire_data["term1_idx"],
+                    comp2=comp2,
+                    term2_idx=wire_data["term2_idx"],
+                    canvas_id=wire_id
+                )
                 self.simulator.add_element(wire_element)
                 self.wires.append(wire_element)
             self.update_wires()
             logging.info(f"Circuit loaded from {file_path}")
+
+
+
 
 
     # -----------------------------------------------------------------------------------
