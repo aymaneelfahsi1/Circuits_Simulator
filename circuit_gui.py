@@ -319,34 +319,52 @@ class CircuitGUI(tk.Tk):
 
     def reset_simulation_state(self):
         """
-        Unbind terminal-click events and clear last_node_voltages/last_node_map
-        so that clicking terminals again is handled by 'handle_wire_click' and not by voltage popup.
+        Reset only the simulation result visuals (voltages, arrows, terminal bindings)
+        while keeping the existing node connectivity (node map) intact.
+        This way, the previous node map remains and can be updated later.
         """
-        # 1) Clear the simulation results references
+        # Clear only the simulation result data, not the connectivity
         if hasattr(self, "last_node_voltages"):
             del self.last_node_voltages
-        if hasattr(self, "last_node_map"):
-            del self.last_node_map
+        # DO NOT delete last_node_map so that connectivity is preserved
 
-        # 2) Unbind the <Button-1> on the terminal dots
+        # Unbind terminal click events so that wiring logic is reactivated.
         for comp in self.components:
             if comp.get("terminal_dot_ids"):
                 for tid in comp["terminal_dot_ids"]:
-                    # Remove the binding so that terminal clicks revert to wiring logic
                     self.canvas.tag_unbind(tid, "<Button-1>")
         
-        # Optionally clear any drawn node voltage labels (if you want to revert visually)
+        # Remove all node voltage labels.
         for label_id in self.node_labels.values():
             self.canvas.delete(label_id)
         self.node_labels.clear()
 
-        # Also optionally remove any voltage arrows if you want a full revert
-        for w in self.wires:
-            for arrow_id in w.voltage_arrows:
+        # Remove all voltage and current arrows from each component.
+        for comp in self.components:
+            for arrow_id in comp.get("voltage_arrows", []):
                 self.canvas.delete(arrow_id)
-            w.voltage_arrows.clear()
+            comp["voltage_arrows"] = []
+            for arrow_id in comp.get("current_arrows", []):
+                self.canvas.delete(arrow_id)
+            comp["current_arrows"] = []
 
-        logging.info("Reset simulation state; you can now edit wiring again.")
+        # Remove all voltage arrows drawn on wires.
+        for wire in self.wires:
+            for arrow_id in wire.voltage_arrows:
+                self.canvas.delete(arrow_id)
+            wire.voltage_arrows.clear()
+
+        # Optionally, if you have any other simulation visuals, clear them here.
+
+        # Finally, update node positions based on current component connectivity.
+        # This will update your internal node map as needed.
+        self.compute_node_positions()
+        
+        logging.info("Reset simulation state; simulation results cleared but node map preserved for updating.")
+
+
+
+
 
     def save_circuit(self):
         """Save the current circuit state to a file."""
@@ -456,10 +474,12 @@ class CircuitGUI(tk.Tk):
     def place_component(self, comp_type, x, y):
         try:
             logging.debug(f"Placing component: {comp_type} at ({x}, {y})")
+            # Snap to grid if enabled
             if self.snap_to_grid.get():
                 x = round(x / self.grid_size) * self.grid_size
                 y = round(y / self.grid_size) * self.grid_size
 
+            # Handle ground specially
             if comp_type == "ground":
                 # Ensure only one ground exists
                 if any(c.get("is_ground") for c in self.components):
@@ -467,18 +487,16 @@ class CircuitGUI(tk.Tk):
                     logging.error("Attempted to place multiple ground components.")
                     return
 
-                # Define the ground component with terminals
                 ground_symbol = {
                     "element": None,  # Ground doesn't have a CircuitElement
                     "comp_type": "ground",
                     "center": (x, y),
                     "rotation": 0,
                     "shape_points": [],
-                    "terminals": [(-10, 0), (10, 0)],  # Define two terminals for wiring
+                    "terminals": [(-10, 0), (10, 0)],  # Horizontal terminals for ground
                     "canvas_items": [],
                     "is_ground": True
                 }
-                # Define the radius for the ground symbol
                 radius = 10  # Adjust as needed for visibility
                 # Draw the ground symbol (a filled disk)
                 oval_id = self.canvas.create_oval(
@@ -495,21 +513,19 @@ class CircuitGUI(tk.Tk):
                     )
                     ground_symbol['canvas_items'].append(tid)
                     abs_terminals.append((x + tx, y + ty))
-                ground_symbol['abs_terminals'] = abs_terminals  # Set abs_terminals
+                ground_symbol['abs_terminals'] = abs_terminals
                 self.components.append(ground_symbol)
                 logging.debug(f"Created ground with canvas IDs: {ground_symbol['canvas_items']}")
-                # Bring ground symbol to the front for visibility
                 self.canvas.tag_raise(oval_id)
-                # Add ground label
                 label_id = self.canvas.create_text(x, y + 20, text="Ground", fill="black", font=("Arial", 10, "bold"))
                 ground_symbol['canvas_items'].append(label_id)
                 return
 
-            # Increment index only for regular components
+            # Increment component index for regular components
             self.comp_index[comp_type] += 1
             idx = self.comp_index[comp_type]
 
-            # Determine default values and prefixes
+            # Set default value and name prefix based on type
             if comp_type == "resistor":
                 name_prefix = "R"
                 default_value = 1000.0
@@ -528,13 +544,19 @@ class CircuitGUI(tk.Tk):
             element = CircuitElement(elem_name, default_value, comp_type)
             self.simulator.add_element(element)
 
-            # Shape points for resistors
+            # Set shape points (if any)
             if comp_type == "resistor":
                 shape_points = [(-20, 0), (-10, -10), (0, 10), (10, -10), (20, 0)]
             else:
                 shape_points = []
 
-            terminals = [(-25, 0), (25, 0)]
+            # Set terminal positions: voltage sources get vertical terminals;
+            # others (resistor, current source) get horizontal terminals.
+            if comp_type == "voltage_source":
+                terminals = [(0, -25), (0, 25)]
+            else:
+                terminals = [(-25, 0), (25, 0)]
+
             comp_dict = {
                 "element": element,
                 "comp_type": comp_type,
@@ -549,6 +571,8 @@ class CircuitGUI(tk.Tk):
             logging.debug(f"Placed component: {comp_dict['element'].name}")
         except Exception as e:
             messagebox.showerror("Error", f"Failed to place component '{comp_type}': {e}")
+
+
 
     def redraw_component(self, comp_dict):
         # Remove old canvas items
@@ -987,6 +1011,7 @@ class CircuitGUI(tk.Tk):
     # Simulation
     # -----------------------------------------------------------------------------------
     def simulate(self):
+        self.clear_component_arrows()
         # Check for unconnected terminals
         for e in self.simulator.elements:
             if e.element_type in ['wire']:
@@ -1020,14 +1045,15 @@ class CircuitGUI(tk.Tk):
         # Compute node positions for labeling
         self.compute_node_positions()
 
-        # Create or update node voltage labels on the canvas
-        self.update_node_labels(node_voltages)
-
-        # Visualize Voltage Differences on Components and Wires
-        self.visualize_voltage_differences(node_voltages)
-
-        # Compute and Display Current through each component and wire
+        # # After updating node labels…
+        # self.update_node_labels(node_voltages)
+        # Draw arrows on wires (existing)
+        # self.visualize_voltage_differences(node_voltages)
+        # NEW: Also draw arrows on non-wire components showing potential differences.
+        self.visualize_component_potentials(node_voltages)
+        # And then compute and display currents as before.
         self.compute_and_display_currents(node_voltages, source_currents)
+
 
         # Create the simulation results window
         results_win = tk.Toplevel(self)
@@ -1076,209 +1102,177 @@ class CircuitGUI(tk.Tk):
     # -----------------------------------------------------------------------------------
     def visualize_voltage_differences(self, node_voltages):
         """
-        Draw voltage difference arrows on wires after simulation and display each node's voltage.
+        Draw voltage difference arrows on wires and display node voltage labels.
         """
-        # Clear existing voltage arrows on wires
+        # Clear existing voltage arrows
         for w in self.wires:
             for arrow_id in w.voltage_arrows:
                 self.canvas.delete(arrow_id)
             w.voltage_arrows.clear()
-
-        # Draw voltage arrows on wires
+        
+        # For each wire, if there is a voltage difference, draw an arrow.
         for w in self.wires:
-            node1 = w.comp1['element'].nodes[w.term1_idx] if w.comp1['element'] else 0
-            node2 = w.comp2['element'].nodes[w.term2_idx] if w.comp2['element'] else 0
-
-            # Get voltages
+            node1 = w.comp1['element'].nodes[w.term1_idx] if w.comp1.get('element') else 0
+            node2 = w.comp2['element'].nodes[w.term2_idx] if w.comp2.get('element') else 0
             v1 = 0.0 if node1 == 0 else node_voltages[self.simulator.node_map[node1]]
             v2 = 0.0 if node2 == 0 else node_voltages[self.simulator.node_map[node2]]
             voltage_diff = v1 - v2
-
+            
             if voltage_diff == 0:
-                continue  # No voltage difference, skip drawing an arrow
+                continue
 
-            # Determine arrow direction based on voltage difference
+            # Determine arrow direction:
             if voltage_diff > 0:
                 start = w.comp1['abs_terminals'][w.term1_idx]
                 end = w.comp2['abs_terminals'][w.term2_idx]
             else:
                 start = w.comp2['abs_terminals'][w.term2_idx]
                 end = w.comp1['abs_terminals'][w.term1_idx]
-
-            # Arrow properties
-            arrow_length = 30  # Base arrow length
-            arrow_thickness = 2
             arrow_color = "red" if voltage_diff > 0 else "blue"
-
-            # Compute the line parameters
-            x1, y1 = start
-            x2, y2 = end
-            angle = math.atan2(y2 - y1, x2 - x1)
-            offset_distance = 10  # Offset distance from the wire
-            offset_x = -offset_distance * math.sin(angle)
-            offset_y = offset_distance * math.cos(angle)
-            mid_x = (x1 + x2) / 2
-            mid_y = (y1 + y2) / 2
-
-            arrow_start_x = mid_x + offset_x
-            arrow_start_y = mid_y + offset_y
-            arrow_end_x = arrow_start_x + arrow_length * math.cos(angle)
-            arrow_end_y = arrow_start_y + arrow_length * math.sin(angle)
-
-            # Draw the voltage arrow on the wire
-            arrow_id = self.canvas.create_line(
-                arrow_start_x, arrow_start_y,
-                arrow_end_x, arrow_end_y,
-                arrow=tk.LAST, fill=arrow_color, width=arrow_thickness
-            )
-            w.voltage_arrows.append(arrow_id)
-
-            # Add a label with the voltage difference near the arrow
-            label_x = (arrow_start_x + arrow_end_x) / 2
-            label_y = (arrow_start_y + arrow_end_y) / 2 - 10
-            label_text = f"{abs(voltage_diff):.5f} V"
-            label_id = self.canvas.create_text(label_x, label_y, text=label_text, fill=arrow_color,
-                                                 font=("Arial", 10, "bold"))
-            w.voltage_arrows.append(label_id)
-
-            logging.debug(f"Drew voltage arrow on wire {w} with voltage difference {voltage_diff:.5f} V")
+            # Draw arrow and label using the helper.
+            arrow_ids = self.draw_arrow_with_label(start, end, arrow_color, 2, 30, "{:.2f} V", abs(voltage_diff))
+            w.voltage_arrows.extend(arrow_ids)
         
-        # ----- NEW: Display node voltages -----
-        # For each node (as computed in self.node_positions), display its calculated voltage.
+        # Draw node voltage labels.
         for node_id, pos in self.node_positions.items():
-            # Skip ground node if desired (or display it separately)
             if node_id == 0:
-                continue
-            node_idx = self.simulator.node_map.get(node_id, None)
+                continue  # Skip ground node if desired
+            node_idx = self.simulator.node_map.get(node_id)
             if node_idx is not None:
                 voltage = node_voltages[node_idx]
-                # Draw the node voltage label a little above the node position.
                 self.canvas.create_text(pos[0], pos[1] - 20,
-                                        text=f"{voltage:.5f} V",
+                                        text=f"{voltage:.2f} V",
                                         fill="black", font=("Arial", 10, "bold"))
-                logging.debug(f"Displayed voltage {voltage:.5f} V at node {node_id}")
+                logging.debug(f"Displayed voltage {voltage:.2f} V at node {node_id}")
+
+    def draw_arrow_with_label(self, start, end, arrow_color, arrow_thickness, arrow_length, label_format, value, offset_distance=10):
+        # Compute the angle from start to end.
+        angle = math.atan2(end[1] - start[1], end[0] - start[0])
+        # Use the provided offset_distance from the midpoint.
+        offset_x = -offset_distance * math.sin(angle)
+        offset_y = offset_distance * math.cos(angle)
+        mid_x = (start[0] + end[0]) / 2
+        mid_y = (start[1] + end[1]) / 2
+        arrow_start = (mid_x + offset_x, mid_y + offset_y)
+        arrow_end = (arrow_start[0] + arrow_length * math.cos(angle),
+                    arrow_start[1] + arrow_length * math.sin(angle))
+        arrow_id = self.canvas.create_line(arrow_start[0], arrow_start[1],
+                                            arrow_end[0], arrow_end[1],
+                                            arrow=tk.LAST, fill=arrow_color, width=arrow_thickness)
+        label_text = label_format.format(value)
+        label_id = self.canvas.create_text((arrow_start[0] + arrow_end[0]) / 2,
+                                            (arrow_start[1] + arrow_end[1]) / 2 - 10,
+                                            text=label_text, fill=arrow_color,
+                                            font=("Arial", 10, "bold"))
+        return arrow_id, label_id
+
+    
+    def visualize_component_potentials(self, node_voltages):
+        """
+        For each non-wire component (and not ground), draw an arrow showing the potential difference.
+        """
+        for comp in self.components:
+            # Only process components with an element that isn’t a wire.
+            if comp.get("element") and comp["element"].element_type != "wire":
+                node1 = comp["element"].nodes[0]
+                node2 = comp["element"].nodes[1]
+                v1 = 0.0 if node1 == 0 else node_voltages[self.simulator.node_map[node1]]
+                v2 = 0.0 if node2 == 0 else node_voltages[self.simulator.node_map[node2]]
+                voltage_diff = v1 - v2
+                if voltage_diff == 0:
+                    continue
+                # Draw arrow from the higher potential terminal to the lower.
+                if voltage_diff > 0:
+                    start = comp["abs_terminals"][0]
+                    end = comp["abs_terminals"][1]
+                else:
+                    start = comp["abs_terminals"][1]
+                    end = comp["abs_terminals"][0]
+                arrow_color = "red" if voltage_diff > 0 else "blue"
+                # Use a larger arrow_length (e.g. 50) and a larger offset (e.g. 20)
+                arrow_ids = self.draw_arrow_with_label(start, end, arrow_color, 2, 50, "{:.2f} V", abs(voltage_diff), offset_distance=50)
+                comp.setdefault("voltage_arrows", []).extend(arrow_ids)
+                logging.debug(f"Drew potential arrow on {comp['element'].name} with {voltage_diff:.2f} V")
+
+
 
 
     def compute_and_display_currents(self, node_voltages, source_currents):
         """
-        Calculate and display currents through each component, including wires.
+        Calculate and display currents through each component (including wires) using arrows.
         """
-        # Clear existing current arrows on components
+        # Clear existing current arrows.
         self.clear_component_arrows()
-
-        # Process each component in self.components (which includes wires)
+        
         for comp in self.components:
-            if not comp['element']:
+            if not comp.get('element'):
                 continue  # Skip ground
-
+            
             elem = comp['element']
             
-            # If the element is a wire, use a fictitious resistance to compute current.
+            # Calculate current based on element type.
+            # if elem.element_type == 'wire':
+            #     R_wire = 1e-12
+            #     node1 = elem.nodes[0]
+            #     node2 = elem.nodes[1]
+            #     if node1 is None or node2 is None:
+            #         logging.warning(f"Wire {elem.name} is not fully connected. Skipping current calculation.")
+            #         continue
+            #     v1 = 0.0 if node1 == 0 else node_voltages[self.simulator.node_map[node1]]
+            #     v2 = 0.0 if node2 == 0 else node_voltages[self.simulator.node_map[node2]]
+            #     current = (v1 - v2) / R_wire
             if elem.element_type == 'wire':
-                R_wire = 1e-12  # Fictitious wire resistance in Ohms
-                node1 = elem.nodes[0]
-                node2 = elem.nodes[1]
-                if node1 is None or node2 is None:
-                    logging.warning(f"Wire {elem.name} is not fully connected. Skipping current calculation.")
-                    continue
-                v1 = 0.0 if node1 == 0 else node_voltages[self.simulator.node_map[node1]]
-                v2 = 0.0 if node2 == 0 else node_voltages[self.simulator.node_map[node2]]
-                current = (v1 - v2) / R_wire
-                logging.debug(f"Wire {elem.name}: V1 = {v1:.5f} V, V2 = {v2:.5f} V, Calculated current = {current:.2e} A")
+                # For ideal wires, we assume no voltage drop so no current arrow is drawn.
+                continue
+
             else:
-                # For resistors, voltage sources, and current sources:
-                if elem.element_type not in ['resistor', 'voltage_source', 'current_source']:
-                    continue  # Skip unknown types
-
-                node1 = elem.nodes[0]
-                node2 = elem.nodes[1]
-
-                if node1 is None or node2 is None:
-                    logging.warning(f"Element {elem.name} is not fully connected. Skipping current calculation.")
-                    continue
-
-                v1 = 0.0 if node1 == 0 else node_voltages[self.simulator.node_map[node1]]
-                v2 = 0.0 if node2 == 0 else node_voltages[self.simulator.node_map[node2]]
-                logging.debug(f"Element {elem.name}: V1 = {v1:.5f} V, V2 = {v2:.5f} V")
-
                 if elem.element_type == 'resistor':
                     if elem.value == 0:
                         logging.error(f"Resistor {elem.name} has zero resistance. Cannot calculate current.")
                         continue
+                    node1, node2 = elem.nodes[0], elem.nodes[1]
+                    v1 = 0.0 if node1 == 0 else node_voltages[self.simulator.node_map[node1]]
+                    v2 = 0.0 if node2 == 0 else node_voltages[self.simulator.node_map[node2]]
                     current = (v1 - v2) / elem.value
-                    logging.debug(f"Resistor {elem.name}: Calculated current = {current:.5f} A")
                 elif elem.element_type == 'voltage_source':
                     vs_index = next((i for i, vs in enumerate(self.simulator.voltage_sources) if vs is elem), None)
                     if vs_index is not None and vs_index < len(source_currents):
                         current = source_currents[vs_index]
-                        logging.debug(f"Voltage Source {elem.name}: Simulated current = {current:.5f} A")
                     else:
                         current = 0.0
                         logging.error(f"Voltage Source {elem.name}: Simulation did not return a current value.")
                 elif elem.element_type == 'current_source':
                     current = elem.value
-                    logging.debug(f"Current Source {elem.name}: Defined current = {current:.5f} A")
                 else:
-                    current = 0.0
-                    logging.warning(f"Element {elem.name} has an unsupported type for current calculation.")
-
-            # Store current in component dictionary
+                    continue  # Unknown type
+            
             comp['current'] = current
-
-            # Determine arrow color and direction
+            
+            # Determine arrow parameters.
             if current > 0:
-                direction = 1  # Current flows from first terminal to second terminal
+                direction = 1
                 color = "green"
-                logging.debug(f"Element {elem.name}: Current direction is from Node {elem.nodes[0]} to Node {elem.nodes[1]}.")
             elif current < 0:
-                direction = -1  # Current flows from second terminal to first terminal
+                direction = -1
                 color = "orange"
-                logging.debug(f"Element {elem.name}: Current direction is from Node {elem.nodes[1]} to Node {elem.nodes[0]}.")
             else:
-                logging.debug(f"Element {elem.name}: No current flow.")
-                continue  # No current, no arrow
-
-            # Calculate arrow properties (we use the same base arrow settings for all elements)
-            arrow_length = 30  # Base arrow length
-            arrow_thickness = 2
-
-            # Determine arrow start from the component's terminal positions (stored in comp['abs_terminals'])
+                continue
+            
+            # For current arrows, use a slightly larger offset.
+            # Determine arrow start and end based on component terminal positions.
             pos1 = comp['abs_terminals'][0]
             pos2 = comp['abs_terminals'][1]
+            # Base arrow direction from pos1 to pos2.
             base_angle = math.atan2(pos2[1] - pos1[1], pos2[0] - pos1[0])
-            offset_distance = 15  # Offset for drawing arrow away from component
-            offset_x = offset_distance * math.sin(base_angle)
-            offset_y = -offset_distance * math.cos(base_angle)
-            mid_x = (pos1[0] + pos2[0]) / 2
-            mid_y = (pos1[1] + pos2[1]) / 2
-
-            # For elements with negative current, reverse the arrow direction.
+            # If current is negative, reverse the arrow direction.
             if direction == -1:
                 base_angle += math.pi
-
-            arrow_start_x = mid_x + offset_x
-            arrow_start_y = mid_y + offset_y
-            arrow_end_x = arrow_start_x + arrow_length * math.cos(base_angle)
-            arrow_end_y = arrow_start_y + arrow_length * math.sin(base_angle)
-
-            arrow_id = self.canvas.create_line(
-                arrow_start_x, arrow_start_y,
-                arrow_end_x, arrow_end_y,
-                arrow=tk.LAST, fill=color, width=arrow_thickness
-            )
-            comp.setdefault('current_arrows', []).append(arrow_id)
-
-            label_x = (arrow_start_x + arrow_end_x) / 2
-            label_y = (arrow_start_y + arrow_end_y) / 2 - 10
-            # For wires, show current in scientific notation; for others, in fixed decimals.
-            if elem.element_type == 'wire':
-                label_text = f"I = {abs(current):.2e} A"
-            else:
-                label_text = f"I = {abs(current):.5f} A"
-            label_id = self.canvas.create_text(label_x, label_y, text=label_text, fill=color, font=("Arial", 10, "bold"))
-            comp['current_arrows'].append(label_id)
-
+            # Compute new start and end using our helper.
+            # Here we use the same arrow_length and thickness as before.
+            arrow_ids = self.draw_arrow_with_label(pos1, pos2, color, 2, 30, "I = {:.2e} A", abs(current))
+            comp.setdefault('current_arrows', []).extend(arrow_ids)
             logging.debug(f"Drew current arrow on element {elem.name} with current {current:.2e} A")
+
 
 
     # -----------------------------------------------------------------------------------
@@ -1376,18 +1370,58 @@ class CircuitGUI(tk.Tk):
             self.node_labels[0] = label_id
             logging.debug(f"Created label for Ground node at ({cx}, {cy + 30})")
 
+
+    def draw_arrow_with_label(self, start, end, arrow_color, arrow_thickness, arrow_length, label_format, value, offset_distance=10):
+        # Compute the angle from start to end.
+        angle = math.atan2(end[1] - start[1], end[0] - start[0])
+        # Use the provided offset_distance from the midpoint.
+        offset_x = -offset_distance * math.sin(angle)
+        offset_y = offset_distance * math.cos(angle)
+        mid_x = (start[0] + end[0]) / 2
+        mid_y = (start[1] + end[1]) / 2
+        arrow_start = (mid_x + offset_x, mid_y + offset_y)
+        arrow_end = (arrow_start[0] + arrow_length * math.cos(angle),
+                    arrow_start[1] + arrow_length * math.sin(angle))
+        arrow_id = self.canvas.create_line(
+            arrow_start[0], arrow_start[1],
+            arrow_end[0], arrow_end[1],
+            arrow=tk.LAST, fill=arrow_color, width=arrow_thickness)
+        label_text = label_format.format(value)
+        label_id = self.canvas.create_text(
+            (arrow_start[0] + arrow_end[0]) / 2,
+            (arrow_start[1] + arrow_end[1]) / 2 - 10,
+            text=label_text, fill=arrow_color,
+            font=("Arial", 10, "bold"))
+        return arrow_id, label_id
+
+
+
     # -----------------------------------------------------------------------------------
     # Voltage and Current Visualization Helpers
     # -----------------------------------------------------------------------------------
     def clear_component_arrows(self):
         """
-        Remove all current arrows from components.
+        Remove all current arrows *and* voltage arrows from components,
+        and do the same for wires if you want to ensure everything is cleared.
         """
+        # 1) Remove current arrows + voltage arrows from each component
         for comp in self.components:
-            # Clear current arrows
+            # Current arrows
             for arrow_id in comp.get('current_arrows', []):
                 self.canvas.delete(arrow_id)
             comp['current_arrows'] = []
+
+            # Voltage arrows
+            for arrow_id in comp.get('voltage_arrows', []):
+                self.canvas.delete(arrow_id)
+            comp['voltage_arrows'] = []
+
+        # 2) If you also want to remove voltage arrows drawn on wires:
+        for w in self.wires:
+            for arrow_id in w.voltage_arrows:
+                self.canvas.delete(arrow_id)
+            w.voltage_arrows.clear()
+
 
     
 
