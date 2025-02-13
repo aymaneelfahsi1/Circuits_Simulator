@@ -28,4 +28,5 @@ This Circuit Simulator is a graphical application built using Python's `tkinter`
 ## **Status**
 
 This application is still in early stages... 
-![image](https://github.com/user-attachments/assets/804b4c4c-66ab-4038-b74c-96b69db7d4c8)
+![image](https://github.com/user-attachments/assets/5ec5ebdf-f34b-4317-831a-e003287902b0)
+
