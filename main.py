@@ -1,4 +1,4 @@
-from circuit_gui import CircuitGUI
+from circuit_gui_copy import CircuitGUI
 
 if __name__ == "__main__":
     app = CircuitGUI()

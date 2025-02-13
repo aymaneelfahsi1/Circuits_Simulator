@@ -1,8 +1,6 @@
 from imports import *
 from circuit_simulator import CircuitSimulator
 from circuit_elements import CircuitElement, Wire
-import pickle
-from tkinter import filedialog
 
 # ---------------------------------------------------------------------------------------
 # GUI: CircuitGUI with Enhanced Visualization and Logging
@@ -95,8 +93,8 @@ class CircuitGUI(tk.Tk):
         # Build UI on the left
         self.build_left_ui()
 
-        # # Create Voltage Legend
-        # self.create_voltage_legend()
+        # Create Voltage Legend
+        self.create_voltage_legend()
 
         # Canvas bindings
         self.canvas.bind("<Button-1>", self.on_left_down)
@@ -139,17 +137,12 @@ class CircuitGUI(tk.Tk):
 
         ttk.Button(self.left_frame, text="Ground (G)",
                command=lambda: self.set_tool("ground")).pack(fill=tk.X, pady=2)  # Add Ground Button
-        
-        ttk.Button(self.left_frame, text="Save Circuit", command=self.save_circuit).pack(fill=tk.X, pady=2)
-        ttk.Button(self.left_frame, text="Load Circuit", command=self.load_circuit).pack(fill=tk.X, pady=2)
 
         ttk.Label(self.left_frame, text="Actions", font=("Arial", 12, "bold")).pack(pady=5)
         ttk.Button(self.left_frame, text="Rotate (R key)",
                    command=lambda: self.rotate_selected(90)).pack(fill=tk.X, pady=2)
         ttk.Button(self.left_frame, text="Delete (Del key)",
                    command=self.delete_selected).pack(fill=tk.X, pady=2)
-        
-        
 
         ttk.Button(self.left_frame, text="Simulate",
                    command=self.simulate).pack(side=tk.BOTTOM, fill=tk.X, pady=4)
@@ -157,9 +150,6 @@ class CircuitGUI(tk.Tk):
         # ---- NEW: Add a button to reset the simulation state
         ttk.Button(self.left_frame, text="Reset Simulation State",
                command=self.reset_simulation_state).pack(side=tk.BOTTOM, fill=tk.X, pady=4)
-        
-        
-
 
         ttk.Checkbutton(self.left_frame, text="Snap to Grid", variable=self.snap_to_grid).pack(side=tk.BOTTOM, padx=5, pady=5)
 
@@ -347,75 +337,6 @@ class CircuitGUI(tk.Tk):
             w.voltage_arrows.clear()
 
         logging.info("Reset simulation state; you can now edit wiring again.")
-
-    def save_circuit(self):
-        """Save the current circuit state to a file."""
-        # Create a serializable circuit state.
-        circuit_state = {
-            "components": [],
-            "wires": [],
-            "comp_index": self.comp_index
-        }
-        # For each component, store only the essential (non-canvas) data.
-        for comp in self.components:
-            comp_copy = {key: comp[key] for key in comp if key not in ["canvas_items", "terminal_dot_ids", "abs_terminals"]}
-            circuit_state["components"].append(comp_copy)
-        # For each wire, store indices of the component references.
-        for wire in self.wires:
-            comp1_index = self.components.index(wire.comp1)
-            comp2_index = self.components.index(wire.comp2)
-            wire_copy = {
-                "name": wire.name,
-                "comp1_index": comp1_index,
-                "term1_idx": wire.term1_idx,
-                "comp2_index": comp2_index,
-                "term2_idx": wire.term2_idx
-            }
-            circuit_state["wires"].append(wire_copy)
-        # Ask user where to save
-        file_path = filedialog.asksaveasfilename(defaultextension=".ckt", filetypes=[("Circuit Files", "*.ckt")])
-        if file_path:
-            with open(file_path, "wb") as f:
-                pickle.dump(circuit_state, f)
-            logging.info(f"Circuit saved to {file_path}")
-
-    def load_circuit(self):
-        """Load a saved circuit state from a file."""
-        file_path = filedialog.askopenfilename(filetypes=[("Circuit Files", "*.ckt")])
-        if file_path:
-            with open(file_path, "rb") as f:
-                circuit_state = pickle.load(f)
-            # Clear existing components and wires
-            for comp in self.components:
-                for item in comp["canvas_items"]:
-                    self.canvas.delete(item)
-            for wire in self.wires:
-                self.canvas.delete(wire.canvas_id)
-            self.components = []
-            self.wires = []
-            self.comp_index = circuit_state["comp_index"]
-
-            # Rebuild components.
-            for comp_data in circuit_state["components"]:
-                comp = comp_data.copy()  # shallow copy is fine
-                self.components.append(comp)
-                self.redraw_component(comp)
-
-            # Rebuild wires using stored component indices.
-            for wire_data in circuit_state["wires"]:
-                comp1 = self.components[wire_data["comp1_index"]]
-                comp2 = self.components[wire_data["comp2_index"]]
-                # Use current terminal positions to draw the wire.
-                x1, y1 = comp1["abs_terminals"][wire_data["term1_idx"]]
-                x2, y2 = comp2["abs_terminals"][wire_data["term2_idx"]]
-                wire_id = self.canvas.create_line(x1, y1, x2, y2, fill="gray", width=2)
-                wire_element = Wire(name=wire_data["name"], comp1=comp1, term1_idx=wire_data["term1_idx"],
-                                    comp2=comp2, term2_idx=wire_data["term2_idx"], canvas_id=wire_id)
-                self.simulator.add_element(wire_element)
-                self.wires.append(wire_element)
-            self.update_wires()
-            logging.info(f"Circuit loaded from {file_path}")
-
 
     # -----------------------------------------------------------------------------------
     # find_wire_by_item => so we can detect wire selection
@@ -955,7 +876,7 @@ class CircuitGUI(tk.Tk):
             voltage = self.last_node_voltages[node_idx]
 
         # Display the voltage in a popup.
-        messagebox.showinfo("Node Voltage", f"Voltage at terminal: {voltage:.5f} V")
+        messagebox.showinfo("Node Voltage", f"Voltage at terminal: {voltage:.2f} V")
 
 
 
@@ -1112,12 +1033,12 @@ class CircuitGUI(tk.Tk):
             # Add a label with the voltage difference near the arrow
             label_x = (arrow_start_x + arrow_end_x) / 2
             label_y = (arrow_start_y + arrow_end_y) / 2 - 10
-            label_text = f"{abs(voltage_diff):.5f} V"
+            label_text = f"{abs(voltage_diff):.2f} V"
             label_id = self.canvas.create_text(label_x, label_y, text=label_text, fill=arrow_color,
                                                  font=("Arial", 10, "bold"))
             w.voltage_arrows.append(label_id)
 
-            logging.debug(f"Drew voltage arrow on wire {w} with voltage difference {voltage_diff:.5f} V")
+            logging.debug(f"Drew voltage arrow on wire {w} with voltage difference {voltage_diff:.2f} V")
         
         # ----- NEW: Display node voltages -----
         # For each node (as computed in self.node_positions), display its calculated voltage.
@@ -1130,9 +1051,9 @@ class CircuitGUI(tk.Tk):
                 voltage = node_voltages[node_idx]
                 # Draw the node voltage label a little above the node position.
                 self.canvas.create_text(pos[0], pos[1] - 20,
-                                        text=f"{voltage:.5f} V",
+                                        text=f"{voltage:.2f} V",
                                         fill="black", font=("Arial", 10, "bold"))
-                logging.debug(f"Displayed voltage {voltage:.5f} V at node {node_id}")
+                logging.debug(f"Displayed voltage {voltage:.2f} V at node {node_id}")
 
 
     def compute_and_display_currents(self, node_voltages, source_currents):
@@ -1160,7 +1081,7 @@ class CircuitGUI(tk.Tk):
                 v1 = 0.0 if node1 == 0 else node_voltages[self.simulator.node_map[node1]]
                 v2 = 0.0 if node2 == 0 else node_voltages[self.simulator.node_map[node2]]
                 current = (v1 - v2) / R_wire
-                logging.debug(f"Wire {elem.name}: V1 = {v1:.5f} V, V2 = {v2:.5f} V, Calculated current = {current:.2e} A")
+                logging.debug(f"Wire {elem.name}: V1 = {v1:.2f} V, V2 = {v2:.2f} V, Calculated current = {current:.2e} A")
             else:
                 # For resistors, voltage sources, and current sources:
                 if elem.element_type not in ['resistor', 'voltage_source', 'current_source']:
@@ -1175,25 +1096,25 @@ class CircuitGUI(tk.Tk):
 
                 v1 = 0.0 if node1 == 0 else node_voltages[self.simulator.node_map[node1]]
                 v2 = 0.0 if node2 == 0 else node_voltages[self.simulator.node_map[node2]]
-                logging.debug(f"Element {elem.name}: V1 = {v1:.5f} V, V2 = {v2:.5f} V")
+                logging.debug(f"Element {elem.name}: V1 = {v1:.2f} V, V2 = {v2:.2f} V")
 
                 if elem.element_type == 'resistor':
                     if elem.value == 0:
                         logging.error(f"Resistor {elem.name} has zero resistance. Cannot calculate current.")
                         continue
                     current = (v1 - v2) / elem.value
-                    logging.debug(f"Resistor {elem.name}: Calculated current = {current:.5f} A")
+                    logging.debug(f"Resistor {elem.name}: Calculated current = {current:.2f} A")
                 elif elem.element_type == 'voltage_source':
                     vs_index = next((i for i, vs in enumerate(self.simulator.voltage_sources) if vs is elem), None)
                     if vs_index is not None and vs_index < len(source_currents):
                         current = source_currents[vs_index]
-                        logging.debug(f"Voltage Source {elem.name}: Simulated current = {current:.5f} A")
+                        logging.debug(f"Voltage Source {elem.name}: Simulated current = {current:.2f} A")
                     else:
                         current = 0.0
                         logging.error(f"Voltage Source {elem.name}: Simulation did not return a current value.")
                 elif elem.element_type == 'current_source':
                     current = elem.value
-                    logging.debug(f"Current Source {elem.name}: Defined current = {current:.5f} A")
+                    logging.debug(f"Current Source {elem.name}: Defined current = {current:.2f} A")
                 else:
                     current = 0.0
                     logging.warning(f"Element {elem.name} has an unsupported type for current calculation.")
@@ -1250,7 +1171,7 @@ class CircuitGUI(tk.Tk):
             if elem.element_type == 'wire':
                 label_text = f"I = {abs(current):.2e} A"
             else:
-                label_text = f"I = {abs(current):.5f} A"
+                label_text = f"I = {abs(current):.2f} A"
             label_id = self.canvas.create_text(label_x, label_y, text=label_text, fill=color, font=("Arial", 10, "bold"))
             comp['current_arrows'].append(label_id)
 
@@ -1337,10 +1258,10 @@ class CircuitGUI(tk.Tk):
                 color = "black"
 
             # Create label with color-coding
-            label_text = f"V{node_id} = {voltage:.5f} V"
+            label_text = f"V{node_id} = {voltage:.2f} V"
             label_id = self.canvas.create_text(x, y - 15, text=label_text, fill=color, font=("Arial", 10, "bold"))
             self.node_labels[node_id] = label_id
-            logging.debug(f"Created label for Node {node_id} at ({x}, {y - 15}) with voltage {voltage:.5f} V and color {color}")
+            logging.debug(f"Created label for Node {node_id} at ({x}, {y - 15}) with voltage {voltage:.2f} V and color {color}")
 
         # Handle ground node separately
         ground_nodes = [c for c in self.components if c.get("is_ground")]
