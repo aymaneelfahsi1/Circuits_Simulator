@@ -1070,16 +1070,30 @@ class CircuitGUI(tk.Tk):
         for e in self.simulator.elements:
             if e.element_type == 'wire':
                 continue  # Skip wires in element results
-            # Calculate voltage across the component
+
             if e.element_type in ['resistor', 'voltage_source', 'current_source']:
                 node1 = e.nodes[0]
                 node2 = e.nodes[1]
                 v1 = 0.0 if node1 == 0 else node_voltages[self.simulator.node_map[node1]]
                 v2 = 0.0 if node2 == 0 else node_voltages[self.simulator.node_map[node2]]
                 voltage_diff = v1 - v2
-                text.insert(tk.END, f"{e.name} ({e.element_type}) - nodes={e.nodes}, value={e.value}, V={voltage_diff:.7f} V\n")
+
+                # Look up the current value stored in the GUI component dictionary.
+                current_val = None
+                for comp in self.components:
+                    if comp.get("element") == e and "current" in comp:
+                        current_val = comp["current"]
+                        break
+                if current_val is not None:
+                    current_str = f", I={current_val:.2e} A"
+                else:
+                    current_str = ""
+
+                text.insert(tk.END,
+                    f"{e.name} ({e.element_type}) - nodes={e.nodes}, value={e.value}, V={voltage_diff:.7f} V{current_str}\n")
             else:
                 text.insert(tk.END, f"{e.name} ({e.element_type}) - nodes={e.nodes}, value={e.value}\n")
+
 
         vsrcs = self.simulator.voltage_sources
         if len(vsrcs) > 0:
