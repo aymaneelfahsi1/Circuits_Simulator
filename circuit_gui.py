@@ -95,8 +95,8 @@ class CircuitGUI(tk.Tk):
         # Build UI on the left
         self.build_left_ui()
 
-        # Create Voltage Legend
-        self.create_voltage_legend()
+        # # Create Voltage Legend
+        # self.create_voltage_legend()
 
         # Canvas bindings
         self.canvas.bind("<Button-1>", self.on_left_down)
