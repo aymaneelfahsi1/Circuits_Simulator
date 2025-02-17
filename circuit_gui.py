@@ -1159,27 +1159,6 @@ class CircuitGUI(tk.Tk):
                                         fill="black", font=("Arial", 10, "bold"))
                 logging.debug(f"Displayed voltage {voltage:.2f} V at node {node_id}")
 
-    def draw_arrow_with_label(self, start, end, arrow_color, arrow_thickness, arrow_length, label_format, value, offset_distance=10):
-        # Compute the angle from start to end.
-        angle = math.atan2(end[1] - start[1], end[0] - start[0])
-        # Use the provided offset_distance from the midpoint.
-        offset_x = -offset_distance * math.sin(angle)
-        offset_y = offset_distance * math.cos(angle)
-        mid_x = (start[0] + end[0]) / 2
-        mid_y = (start[1] + end[1]) / 2
-        arrow_start = (mid_x + offset_x, mid_y + offset_y)
-        arrow_end = (arrow_start[0] + arrow_length * math.cos(angle),
-                    arrow_start[1] + arrow_length * math.sin(angle))
-        arrow_id = self.canvas.create_line(arrow_start[0], arrow_start[1],
-                                            arrow_end[0], arrow_end[1],
-                                            arrow=tk.LAST, fill=arrow_color, width=arrow_thickness)
-        label_text = label_format.format(value)
-        label_id = self.canvas.create_text((arrow_start[0] + arrow_end[0]) / 2,
-                                            (arrow_start[1] + arrow_end[1]) / 2 - 10,
-                                            text=label_text, fill=arrow_color,
-                                            font=("Arial", 10, "bold"))
-        return arrow_id, label_id
-
     
     def visualize_component_potentials(self, node_voltages):
         """
