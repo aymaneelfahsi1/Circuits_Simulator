@@ -295,7 +295,7 @@ class CircuitGUI(tk.Tk):
         self.compute_and_display_currents(self.last_node_voltages, self.last_source_currents)
 
     def reset_simulation_state(self):
-        logging.info("Resetting entire simulation - clearing all results and closing windows")
+        logging.info("Resetting entire circuit - deleting ALL components, wires, and simulation data")
 
         if hasattr(self, "last_node_voltages"):
             del self.last_node_voltages
@@ -304,32 +304,24 @@ class CircuitGUI(tk.Tk):
         if hasattr(self, "last_source_currents"):
             del self.last_source_currents
 
-        for comp in self.components:
-            if comp.get("terminal_dot_ids"):
-                for tid in comp["terminal_dot_ids"]:
-                    self.canvas.tag_unbind(tid, "<Button-1>")
-
         for label_id in self.node_labels.values():
             self.canvas.delete(label_id)
         self.node_labels.clear()
 
         for comp in self.components:
-            for item_id in comp.get("voltage_arrows", []):
-                self.canvas.delete(item_id)
-            comp["voltage_arrows"] = []
-            for item_id in comp.get("current_arrows", []):
-                self.canvas.delete(item_id)
-            comp["current_arrows"] = []
-            if "current" in comp:
-                del comp["current"]
+            if comp.get('element'):
+                self.simulator.remove_element(comp['element'])
+            for it in comp.get('canvas_items', []):
+                self.canvas.delete(it)
 
         for wire in self.wires:
-            for item_id in wire.voltage_arrows:
-                self.canvas.delete(item_id)
-            wire.voltage_arrows.clear()
-            for item_id in wire.current_arrows:
-                self.canvas.delete(item_id)
-            wire.current_arrows.clear()
+            self.canvas.delete(wire.canvas_id)
+            self.simulator.remove_element(wire)
+
+        self.components.clear()
+        self.wires.clear()
+        self.selected_components.clear()
+        self.selected_wires.clear()
 
         for window in self.winfo_children():
             if isinstance(window, tk.Toplevel):
@@ -337,8 +329,8 @@ class CircuitGUI(tk.Tk):
 
         self.canvas.update()
 
-        logging.info("Reset complete: all simulation results, arrows, labels, and result windows cleared")
-        messagebox.showinfo("Reset Complete", "All simulation results have been cleared.")
+        logging.info("Reset complete: entire circuit deleted - all components, wires, and simulation data cleared")
+        messagebox.showinfo("Reset Complete", "Entire circuit has been deleted.")
 
 
 
