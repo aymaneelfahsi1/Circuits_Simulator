@@ -272,13 +272,10 @@ class CircuitGUI(tk.Tk):
             logging.debug("Cancelled ongoing actions and cleared selection box")
 
     def reset_simulation_state(self):
-        """
-        Reset only the simulation result visuals (voltages, arrows, terminal bindings)
-        while keeping the existing node connectivity (node map) intact.
-        This way, the previous node map remains and can be updated later.
-        """
         if hasattr(self, "last_node_voltages"):
             del self.last_node_voltages
+        if hasattr(self, "last_node_map"):
+            del self.last_node_map
 
         for comp in self.components:
             if comp.get("terminal_dot_ids"):
@@ -290,22 +287,24 @@ class CircuitGUI(tk.Tk):
         self.node_labels.clear()
 
         for comp in self.components:
-            for arrow_id in comp.get("voltage_arrows", []):
-                self.canvas.delete(arrow_id)
+            for item_id in comp.get("voltage_arrows", []):
+                self.canvas.delete(item_id)
             comp["voltage_arrows"] = []
-            for arrow_id in comp.get("current_arrows", []):
-                self.canvas.delete(arrow_id)
+            for item_id in comp.get("current_arrows", []):
+                self.canvas.delete(item_id)
             comp["current_arrows"] = []
 
         for wire in self.wires:
-            for arrow_id in wire.voltage_arrows:
-                self.canvas.delete(arrow_id)
+            for item_id in wire.voltage_arrows:
+                self.canvas.delete(item_id)
             wire.voltage_arrows.clear()
-
+            for item_id in wire.current_arrows:
+                self.canvas.delete(item_id)
+            wire.current_arrows.clear()
 
         self.compute_node_positions()
 
-        logging.info("Reset simulation state; simulation results cleared but node map preserved for updating.")
+        logging.info("Reset simulation state; all arrows and labels cleared from canvas.")
 
 
 
