@@ -68,26 +68,57 @@ class CircuitSimulator:
                 self.next_node_index += 1
 
     def detect_floating_nodes(self):
-        connected = set()
-        connected.add(self.uf.find(0))
-
+        """
+        Check if all nodes are reachable from ground (node 0) through any components.
+        Uses BFS to traverse the circuit topology.
+        """
+        # Build adjacency graph of all node connections
+        graph = {}
         for e in self.elements:
-            if e.element_type == 'voltage_source':
-                n1, n2 = e.nodes
-                if n1 is not None:
-                    connected.add(self.uf.find(n1))
-                if n2 is not None:
-                    connected.add(self.uf.find(n2))
+            if e.element_type == 'wire':
+                continue
+            n1, n2 = e.nodes[0], e.nodes[1]
+            if n1 is not None and n2 is not None:
+                r1 = self.uf.find(n1)
+                r2 = self.uf.find(n2)
+                graph.setdefault(r1, set()).add(r2)
+                graph.setdefault(r2, set()).add(r1)
 
+        # BFS from ground to find all reachable nodes
+        ground = self.uf.find(0)
+        if ground not in graph:
+            logging.error("Ground node has no connections!")
+            return set([ground])
+
+        visited = set([ground])
+        queue = [ground]
+        while queue:
+            node = queue.pop(0)
+            for neighbor in graph.get(node, set()):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+
+        # Find all nodes in circuit
         all_nodes = set()
         for e in self.elements:
+            if e.element_type == 'wire':
+                continue
             for node in e.nodes:
                 if node is not None:
                     all_nodes.add(self.uf.find(node))
 
-        floating_nodes = all_nodes - connected
+        # Floating nodes are those not reachable from ground
+        floating_nodes = all_nodes - visited
         if floating_nodes:
             logging.warning(f"Detected floating nodes: {floating_nodes}")
+            # Log which components have floating nodes
+            for e in self.elements:
+                if e.element_type == 'wire':
+                    continue
+                for node in e.nodes:
+                    if node is not None and self.uf.find(node) in floating_nodes:
+                        logging.error(f"Component {e.name} has floating node: {node} (merged to {self.uf.find(node)})")
             return floating_nodes
         return None
 
