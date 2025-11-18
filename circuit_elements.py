@@ -19,6 +19,7 @@ class Wire(CircuitElement):
     """
     Represents a wire connecting two terminals.
     Inherits from CircuitElement with element_type='wire' and value=0.
+    Wire nodes are computed dynamically from connected components.
     """
     def __init__(self, name, comp1, term1_idx, comp2, term2_idx, canvas_id):
         super().__init__(name=name, value=0, element_type='wire')
@@ -29,6 +30,20 @@ class Wire(CircuitElement):
         self.canvas_id = canvas_id
         self.voltage_arrows = []
         self.current_arrows = []
+
+    @property
+    def nodes(self):
+        """Compute wire nodes dynamically from connected components."""
+        eA = self.comp1.get('element')
+        eB = self.comp2.get('element')
+        nodeA = eA.nodes[self.term1_idx] if eA else 0
+        nodeB = eB.nodes[self.term2_idx] if eB else 0
+        return [nodeA, nodeB]
+
+    @nodes.setter
+    def nodes(self, value):
+        """Setter for compatibility, but nodes are computed dynamically."""
+        pass  # Ignore - nodes are always computed from components
 
     def __repr__(self):
         name1 = self.comp1['element'].name if self.comp1['element'] else "Ground"

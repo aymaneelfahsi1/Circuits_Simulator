@@ -388,11 +388,7 @@ class CircuitGUI(tk.Tk):
                     canvas_id=wire_id
                 )
 
-                eA = comp1.get('element')
-                eB = comp2.get('element')
-                nodeA = eA.nodes[wire_data["term1_idx"]] if eA else 0
-                nodeB = eB.nodes[wire_data["term2_idx"]] if eB else 0
-                wire_element.nodes = [nodeA, nodeB]
+                # Wire nodes are computed dynamically from connected components
 
                 self.simulator.add_element(wire_element)
                 self.wires.append(wire_element)
@@ -732,19 +728,26 @@ class CircuitGUI(tk.Tk):
 
         else:
             if nodeA != nodeB:
-                for e in self.simulator.elements:
-                    for i, n in enumerate(e.nodes):
-                        if n == nodeB:
-                            e.nodes[i] = nodeA
-                logging.debug(f"Merged node {nodeB} into node {nodeA}")
-
-        if nodeA == 0 or nodeB == 0:
-            ground_node = 0
-            for e in self.simulator.elements:
-                for i, n in enumerate(e.nodes):
-                    if n in [nodeA, nodeB]:
-                        e.nodes[i] = ground_node
-            logging.debug("Propagated ground connection.")
+                # Always merge into ground (0) if one node is ground
+                if nodeA == 0:
+                    for e in self.simulator.elements:
+                        for i, n in enumerate(e.nodes):
+                            if n == nodeB:
+                                e.nodes[i] = 0
+                    logging.debug(f"Merged node {nodeB} into ground")
+                elif nodeB == 0:
+                    for e in self.simulator.elements:
+                        for i, n in enumerate(e.nodes):
+                            if n == nodeA:
+                                e.nodes[i] = 0
+                    logging.debug(f"Merged node {nodeA} into ground")
+                else:
+                    # Normal merge: merge nodeB into nodeA
+                    for e in self.simulator.elements:
+                        for i, n in enumerate(e.nodes):
+                            if n == nodeB:
+                                e.nodes[i] = nodeA
+                    logging.debug(f"Merged node {nodeB} into node {nodeA}")
 
         x1, y1 = compA['abs_terminals'][termA]
         x2, y2 = compB['abs_terminals'][termB]
@@ -753,9 +756,7 @@ class CircuitGUI(tk.Tk):
         wire_name = f"Wire{len([e for e in self.simulator.elements if e.element_type == 'wire']) + 1}"
         wire_element = Wire(name=wire_name, comp1=compA, term1_idx=termA, comp2=compB, term2_idx=termB, canvas_id=wire_id)
 
-        final_nodeA = eA.nodes[termA] if eA else 0
-        final_nodeB = eB.nodes[termB] if eB else 0
-        wire_element.nodes = [final_nodeA, final_nodeB]
+        # Wire nodes are now computed dynamically from connected components
 
         self.simulator.add_element(wire_element)
         self.wires.append(wire_element)
