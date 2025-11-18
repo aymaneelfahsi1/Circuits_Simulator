@@ -3,14 +3,14 @@ import logging
 class UnionFind:
     def __init__(self):
         self.parent = {}
-    
+
     def find(self, node):
         if node not in self.parent:
             self.parent[node] = node
         if self.parent[node] != node:
-            self.parent[node] = self.find(self.parent[node])  # Path compression
+            self.parent[node] = self.find(self.parent[node])
         return self.parent[node]
-    
+
     def union(self, node1, node2):
         root1 = self.find(node1)
         root2 = self.find(node2)

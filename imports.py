@@ -4,7 +4,6 @@ import numpy as np
 import math
 import logging
 
-# Logging configuration
 logging.basicConfig(
     level=logging.DEBUG,
     filename='circuit_simulator.log',

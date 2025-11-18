@@ -12,10 +12,10 @@ class CircuitSimulator:
     """
     def __init__(self):
         self.elements = []
-        self.node_map = {}          # maps a node_id (int, excluding ground) -> matrix index
-        self.next_node_index = 0    # Start indexing from 0 for non-ground nodes
+        self.node_map = {}
+        self.next_node_index = 0
         self.voltage_sources = []
-        self.uf = UnionFind()       # Initialize Union-Find
+        self.uf = UnionFind()
 
     def clear_all(self):
         self.elements.clear()
@@ -27,7 +27,7 @@ class CircuitSimulator:
         Merge nodes connected by wires using Union-Find.
         (Reinitializes the union–find structure each time.)
         """
-        self.uf = UnionFind()  # Reset union-find structure
+        self.uf = UnionFind()
         for e in self.elements:
             if e.element_type == 'wire':
                 node1, node2 = e.nodes
@@ -55,7 +55,7 @@ class CircuitSimulator:
         unique_nodes = set()
         for e in self.elements:
             if e.element_type == 'wire':
-                continue  # Wires are handled by Union-Find
+                continue
             for nd in e.nodes:
                 if nd is not None and nd != 0:
                     unique_nodes.add(self.uf.find(nd))
@@ -69,9 +69,8 @@ class CircuitSimulator:
 
     def detect_floating_nodes(self):
         connected = set()
-        connected.add(self.uf.find(0))  # Ground node is always connected.
+        connected.add(self.uf.find(0))
 
-        # Nodes connected via voltage sources or ground
         for e in self.elements:
             if e.element_type == 'voltage_source':
                 n1, n2 = e.nodes
@@ -80,22 +79,13 @@ class CircuitSimulator:
                 if n2 is not None:
                     connected.add(self.uf.find(n2))
 
-        # Gather all nodes in the circuit
         all_nodes = set()
         for e in self.elements:
             for node in e.nodes:
                 if node is not None:
                     all_nodes.add(self.uf.find(node))
 
-        # Identify floating nodes
         floating_nodes = all_nodes - connected
-        # (Uncomment the following lines to show a warning if floating nodes are detected.)
-        # if floating_nodes:
-        #     messagebox.showerror("Simulation Error", f"Floating nodes detected: {floating_nodes}")
-        #     logging.debug(f"All nodes: {all_nodes}")
-        #     logging.debug(f"Connected nodes: {connected}")
-        #     logging.debug(f"Floating nodes detected: {floating_nodes}")
-        #     return floating_nodes
         return None
 
     def stamp_matrices(self):
@@ -107,7 +97,6 @@ class CircuitSimulator:
         num_vsources = len(self.voltage_sources)
         num_nodes = self.next_node_index
 
-        # Total size: num_nodes + num_vsources
         n = num_nodes + num_vsources
         A = np.zeros((n, n))
         z = np.zeros(n)
@@ -118,7 +107,6 @@ class CircuitSimulator:
             return self.node_map.get(self.uf.find(node_id), None)
 
 
-        # Stamp Resistors
         for e in self.elements:
             if e.element_type == 'resistor':
                 r = e.value
@@ -139,7 +127,6 @@ class CircuitSimulator:
                 elif n2 is not None:
                     A[n2, n2] += g
 
-        # Stamp Current Sources
         for e in self.elements:
             if e.element_type == 'current_source':
                 i_val = e.value
@@ -151,12 +138,11 @@ class CircuitSimulator:
                 if n2 is not None:
                     z[n2] += i_val
 
-        # Stamp Voltage Sources
         vs_i = 0
         for e in self.voltage_sources:
             v_val = e.value
-            n1 = n_idx(e.nodes[0])  # Positive terminal
-            n2 = n_idx(e.nodes[1])  # Negative terminal
+            n1 = n_idx(e.nodes[0])
+            n2 = n_idx(e.nodes[1])
             logging.debug(f"Stamping voltage source {e.name} from node {e.nodes[0]} to node {e.nodes[1]} with voltage {v_val}")
             row = num_nodes + vs_i
             if n1 is not None:
@@ -178,17 +164,15 @@ class CircuitSimulator:
         Solve the matrix equation using Modified Nodal Analysis.
         Return (node_voltages, voltage_source_currents).
         """
-        self.build_union_find()      # Merge nodes connected by wires
-        self.build_node_map()        # Assign unique indices to merged nodes
+        self.build_union_find()
+        self.build_node_map()
 
-        # Detect floating nodes before stamping matrices
         floating_nodes = self.detect_floating_nodes()
         if floating_nodes:
             return None, None
 
         A, z, num_nodes, num_vsources = self.stamp_matrices()
 
-        # Check matrix rank
         try:
             rank = np.linalg.matrix_rank(A)
             if rank < A.shape[0]:

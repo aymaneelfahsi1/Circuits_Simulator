@@ -1,16 +1,13 @@
-# ---------------------------------------------------------------------------------------
-# Data Classes for Circuit Elements
-# ---------------------------------------------------------------------------------------
 from imports import *
 class CircuitElement:
     """
     Represents a circuit element (resistor, voltage source, current source, wire).
     """
     def __init__(self, name, value, element_type):
-        self.name = name           # e.g., R1, V1, I1, Wire1
-        self.value = value         # numeric value (Ohms, Volts, Amps, 0 for wires)
+        self.name = name
+        self.value = value
         self.element_type = element_type
-        self.nodes = [None, None]  # two terminals' node IDs
+        self.nodes = [None, None]
 
     def __repr__(self):
         return f"<{self.element_type} {self.name}, value={self.value}, nodes={self.nodes}>"
@@ -28,8 +25,8 @@ class Wire(CircuitElement):
         self.comp2 = comp2
         self.term2_idx = term2_idx
         self.canvas_id = canvas_id
-        self.voltage_arrows = []  # List to store voltage arrow IDs
-        self.current_arrows = []   # List to store current arrow IDs
+        self.voltage_arrows = []
+        self.current_arrows = []
 
     def __repr__(self):
         name1 = self.comp1['element'].name if self.comp1['element'] else "Ground"
