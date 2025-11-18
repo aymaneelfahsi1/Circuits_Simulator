@@ -271,6 +271,29 @@ class CircuitGUI(tk.Tk):
             self.selection_box = None
             logging.debug("Cancelled ongoing actions and cleared selection box")
 
+    def refresh_simulation_visuals(self):
+        if not hasattr(self, "last_node_voltages") or not hasattr(self, "last_source_currents"):
+            return
+
+        for comp in self.components:
+            for item_id in comp.get("voltage_arrows", []):
+                self.canvas.delete(item_id)
+            comp["voltage_arrows"] = []
+            for item_id in comp.get("current_arrows", []):
+                self.canvas.delete(item_id)
+            comp["current_arrows"] = []
+
+        for wire in self.wires:
+            for item_id in wire.voltage_arrows:
+                self.canvas.delete(item_id)
+            wire.voltage_arrows.clear()
+            for item_id in wire.current_arrows:
+                self.canvas.delete(item_id)
+            wire.current_arrows.clear()
+
+        self.visualize_component_potentials(self.last_node_voltages)
+        self.compute_and_display_currents(self.last_node_voltages, self.last_source_currents)
+
     def reset_simulation_state(self):
         logging.info("Resetting entire simulation - clearing all results and closing windows")
 
@@ -278,6 +301,8 @@ class CircuitGUI(tk.Tk):
             del self.last_node_voltages
         if hasattr(self, "last_node_map"):
             del self.last_node_map
+        if hasattr(self, "last_source_currents"):
+            del self.last_source_currents
 
         for comp in self.components:
             if comp.get("terminal_dot_ids"):
@@ -603,6 +628,8 @@ class CircuitGUI(tk.Tk):
         if comp_dict in self.selected_components:
             self.highlight_component(comp_dict, True)
 
+        self.after_idle(self.refresh_simulation_visuals)
+
     def edit_component_value(self, comp_dict):
         elem = comp_dict['element']
         unit = {'resistor': 'Ω', 'voltage_source': 'V', 'current_source': 'A'}.get(elem.element_type, '')
@@ -811,6 +838,7 @@ class CircuitGUI(tk.Tk):
             x2, y2 = w.comp2['abs_terminals'][w.term2_idx]
             self.canvas.coords(w.canvas_id, x1, y1, x2, y2)
         self.compute_node_positions()
+        self.after_idle(self.refresh_simulation_visuals)
 
     def clear_selection(self):
         for c in self.selected_components:
@@ -927,6 +955,7 @@ class CircuitGUI(tk.Tk):
 
         self.last_node_voltages = node_voltages
         self.last_node_map = self.simulator.node_map.copy()
+        self.last_source_currents = source_currents
         self.update_terminal_bindings()
 
 
