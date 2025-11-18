@@ -541,34 +541,52 @@ class CircuitGUI(tk.Tk):
                 coords.extend(p)
             item_id = self.canvas.create_line(*coords, width=2, fill="black")
             comp_dict['canvas_items'].append(item_id)
-            mid_index = len(coords) // 4
-            label_x = coords[mid_index*2] + 5
-            label_y = coords[mid_index*2+1] + 5
-            label_id = self.canvas.create_text(label_x, label_y, text=f"{comp_dict['element'].name}\n{comp_dict['element'].value}Ω", fill="black", font=("Arial", 10))
+
+            angle_rad = math.radians(rot)
+            label_offset = 25
+            offset_x = -label_offset * math.sin(angle_rad)
+            offset_y = label_offset * math.cos(angle_rad)
+
+            label_x = cx + offset_x
+            label_y = cy + offset_y
+            label_id = self.canvas.create_text(label_x, label_y, text=f"{comp_dict['element'].name}\n{comp_dict['element'].value}Ω", fill="black", font=("Arial", 9), anchor="center")
             comp_dict['canvas_items'].append(label_id)
         elif ctype == "voltage_source":
             r = 20
-            item_id = self.canvas.create_oval(cx - r, cy - r, cx + r, cy + r, width=2, outline="blue")
+            item_id = self.canvas.create_oval(cx - r, cy - r, cx + r, cy + r, width=2, outline="blue", fill="white")
             comp_dict['canvas_items'].append(item_id)
-            plus_id = self.canvas.create_text(cx, cy - 10, text="+", fill="blue")
-            minus_id = self.canvas.create_text(cx, cy + 10, text="-", fill="blue")
-            comp_dict['canvas_items'].extend([plus_id, minus_id])
-            label_id = self.canvas.create_text(cx, cy, text=f"{comp_dict['element'].name}\n{comp_dict['element'].value}V", fill="blue", font=("Arial", 10))
+
+            angle_rad = math.radians(rot)
+            label_offset = 35
+            offset_x = label_offset * math.cos(angle_rad)
+            offset_y = label_offset * math.sin(angle_rad)
+
+            label_x = cx + offset_x
+            label_y = cy + offset_y
+            label_id = self.canvas.create_text(label_x, label_y, text=f"{comp_dict['element'].name}\n{comp_dict['element'].value}V", fill="blue", font=("Arial", 9, "bold"), anchor="center")
             comp_dict['canvas_items'].append(label_id)
         elif ctype == "current_source":
             r = 20
-            item_id = self.canvas.create_oval(cx - r, cy - r, cx + r, cy + r, width=2, outline="green")
+            item_id = self.canvas.create_oval(cx - r, cy - r, cx + r, cy + r, width=2, outline="green", fill="white")
             comp_dict['canvas_items'].append(item_id)
-            arrow_id = self.canvas.create_line(cx, cy + 10, cx, cy - 10, arrow=tk.LAST, fill="green", width=2)
+            arrow_id = self.canvas.create_line(cx - 5, cy + 10, cx - 5, cy - 10, arrow=tk.LAST, fill="green", width=2)
             comp_dict['canvas_items'].append(arrow_id)
-            label_id = self.canvas.create_text(cx, cy, text=f"{comp_dict['element'].name}\n{comp_dict['element'].value}A", fill="green", font=("Arial", 10))
+
+            angle_rad = math.radians(rot)
+            label_offset = 35
+            offset_x = label_offset * math.cos(angle_rad)
+            offset_y = label_offset * math.sin(angle_rad)
+
+            label_x = cx + offset_x
+            label_y = cy + offset_y
+            label_id = self.canvas.create_text(label_x, label_y, text=f"{comp_dict['element'].name}\n{comp_dict['element'].value}A", fill="green", font=("Arial", 9, "bold"), anchor="center")
             comp_dict['canvas_items'].append(label_id)
 
 
 
         comp_dict['terminal_dot_ids'] = []
         for tx, ty in comp_dict['abs_terminals']:
-            tid = self.canvas.create_oval(tx - 8, ty - 8, tx + 8, ty + 8, fill="red")
+            tid = self.canvas.create_oval(tx - 4, ty - 4, tx + 4, ty + 4, fill="red", outline="darkred", width=1)
             comp_dict['terminal_dot_ids'].append(tid)
             comp_dict['canvas_items'].append(tid)
 
@@ -592,15 +610,7 @@ class CircuitGUI(tk.Tk):
                 return
             elem.value = new_val
             logging.debug(f"Updated {elem.name} to new value: {new_val}")
-            for item_id in comp_dict['canvas_items']:
-                if 'text' in self.canvas.type(item_id):
-                    if elem.element_type == 'resistor':
-                        self.canvas.itemconfig(item_id, text=f"{elem.name}\n{elem.value}Ω")
-                    elif elem.element_type == 'voltage_source':
-                        self.canvas.itemconfig(item_id, text=f"{elem.name}\n{elem.value}V")
-                    elif elem.element_type == 'current_source':
-                        self.canvas.itemconfig(item_id, text=f"{elem.name}\n{elem.value}A")
-                    break
+            self.redraw_component(comp_dict)
 
     def rotate_selected(self, angle_deg):
         for c in self.selected_components:
@@ -751,7 +761,7 @@ class CircuitGUI(tk.Tk):
 
         x1, y1 = compA['abs_terminals'][termA]
         x2, y2 = compB['abs_terminals'][termB]
-        wire_id = self.canvas.create_line(x1, y1, x2, y2, fill="gray", width=2)
+        wire_id = self.canvas.create_line(x1, y1, x2, y2, fill="#555555", width=2.5, capstyle=tk.ROUND)
 
         wire_name = f"Wire{len([e for e in self.simulator.elements if e.element_type == 'wire']) + 1}"
         wire_element = Wire(name=wire_name, comp1=compA, term1_idx=termA, comp2=compB, term2_idx=termB, canvas_id=wire_id)
@@ -830,14 +840,11 @@ class CircuitGUI(tk.Tk):
             logging.debug(f"Unhighlighted component {comp_dict.get('element').name if comp_dict.get('element') else 'Ground'}")
 
     def highlight_wire(self, wire_obj, highlight):
-        """
-        Change wire color/width to show selection or unselection.
-        """
         if highlight:
-            self.canvas.itemconfig(wire_obj.canvas_id, fill="blue", width=3)
+            self.canvas.itemconfig(wire_obj.canvas_id, fill="blue", width=4)
             logging.debug(f"Highlighted wire {wire_obj}")
         else:
-            self.canvas.itemconfig(wire_obj.canvas_id, fill="gray", width=2)
+            self.canvas.itemconfig(wire_obj.canvas_id, fill="#555555", width=2.5)
             logging.debug(f"Unhighlighted wire {wire_obj}")
 
     def find_component_by_item(self, item_id):
@@ -1016,9 +1023,6 @@ class CircuitGUI(tk.Tk):
 
 
     def visualize_component_potentials(self, node_voltages):
-        """
-        For each non-wire component (and not ground), draw an arrow showing the potential difference.
-        """
         for comp in self.components:
             if comp.get("element") and comp["element"].element_type != "wire":
                 node1 = comp["element"].nodes[0]
@@ -1026,7 +1030,7 @@ class CircuitGUI(tk.Tk):
                 v1 = 0.0 if node1 == 0 else node_voltages[self.simulator.node_map[node1]]
                 v2 = 0.0 if node2 == 0 else node_voltages[self.simulator.node_map[node2]]
                 voltage_diff = v1 - v2
-                if voltage_diff == 0:
+                if abs(voltage_diff) < 1e-6:
                     continue
                 if voltage_diff > 0:
                     start = comp["abs_terminals"][0]
@@ -1034,8 +1038,8 @@ class CircuitGUI(tk.Tk):
                 else:
                     start = comp["abs_terminals"][1]
                     end = comp["abs_terminals"][0]
-                arrow_color = "red" if voltage_diff > 0 else "blue"
-                arrow_ids = self.draw_arrow_with_label(start, end, arrow_color, 2, 50, "{:.2f} V", abs(voltage_diff), offset_distance=50)
+                arrow_color = "purple"
+                arrow_ids = self.draw_arrow_with_label(start, end, arrow_color, 1.5, 40, "{:.2f}V", abs(voltage_diff), offset_distance=50, is_voltage=True)
                 comp.setdefault("voltage_arrows", []).extend(arrow_ids)
                 logging.debug(f"Drew potential arrow on {comp['element'].name} with {voltage_diff:.2f} V")
 
@@ -1043,9 +1047,6 @@ class CircuitGUI(tk.Tk):
 
 
     def compute_and_display_currents(self, node_voltages, source_currents):
-        """
-        Calculate and display currents through each component (including wires) using arrows.
-        """
         self.clear_component_arrows()
 
         for comp in self.components:
@@ -1086,13 +1087,13 @@ class CircuitGUI(tk.Tk):
             if current > 0:
                 start_pos = comp['abs_terminals'][0]
                 end_pos = comp['abs_terminals'][1]
-                color = "green"
+                color = "darkgreen"
             else:
                 start_pos = comp['abs_terminals'][1]
                 end_pos = comp['abs_terminals'][0]
-                color = "orange"
+                color = "darkorange"
 
-            arrow_ids = self.draw_arrow_with_label(start_pos, end_pos, color, 2, 30, "I = {:.2e} A", abs(current))
+            arrow_ids = self.draw_arrow_with_label(start_pos, end_pos, color, 2, 35, "{:.2e}A", abs(current), offset_distance=30)
             comp.setdefault('current_arrows', []).extend(arrow_ids)
             logging.debug(f"Drew current arrow on element {elem.name} with current {current:.2e} A")
 
@@ -1178,25 +1179,37 @@ class CircuitGUI(tk.Tk):
             logging.debug(f"Created label for Ground node at ({cx}, {cy + 30})")
 
 
-    def draw_arrow_with_label(self, start, end, arrow_color, arrow_thickness, arrow_length, label_format, value, offset_distance=10):
+    def draw_arrow_with_label(self, start, end, arrow_color, arrow_thickness, arrow_length, label_format, value, offset_distance=30, is_voltage=False):
         angle = math.atan2(end[1] - start[1], end[0] - start[0])
+
         offset_x = -offset_distance * math.sin(angle)
         offset_y = offset_distance * math.cos(angle)
+
         mid_x = (start[0] + end[0]) / 2
         mid_y = (start[1] + end[1]) / 2
         arrow_start = (mid_x + offset_x, mid_y + offset_y)
         arrow_end = (arrow_start[0] + arrow_length * math.cos(angle),
                     arrow_start[1] + arrow_length * math.sin(angle))
+
         arrow_id = self.canvas.create_line(
             arrow_start[0], arrow_start[1],
             arrow_end[0], arrow_end[1],
             arrow=tk.LAST, fill=arrow_color, width=arrow_thickness)
+
         label_text = label_format.format(value)
+        label_x = (arrow_start[0] + arrow_end[0]) / 2
+        label_y = (arrow_start[1] + arrow_end[1]) / 2
+
+        label_offset = 15
+        label_x += -label_offset * math.sin(angle)
+        label_y += label_offset * math.cos(angle)
+
         label_id = self.canvas.create_text(
-            (arrow_start[0] + arrow_end[0]) / 2,
-            (arrow_start[1] + arrow_end[1]) / 2 - 10,
+            label_x, label_y,
             text=label_text, fill=arrow_color,
-            font=("Arial", 10, "bold"))
+            font=("Arial", 9, "bold"),
+            anchor="center")
+
         return arrow_id, label_id
 
 

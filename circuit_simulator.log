@@ -1,0 +1,360 @@
+2025-11-19 00:15:13,295 - DEBUG - Added element: <current_source I4, value=6.0, nodes=[0, 1]>
+2025-11-19 00:15:13,295 - DEBUG - Added element: <voltage_source V10, value=36.0, nodes=[2, 0]>
+2025-11-19 00:15:13,295 - DEBUG - Added element: <resistor R15, value=12.0, nodes=[1, 2]>
+2025-11-19 00:15:13,295 - DEBUG - Added element: <resistor R16, value=3.0, nodes=[1, 4]>
+2025-11-19 00:15:13,295 - DEBUG - Added element: <resistor R17, value=6.0, nodes=[1, 0]>
+2025-11-19 00:15:13,295 - DEBUG - Added element: <resistor R18, value=3.0, nodes=[4, 0]>
+2025-11-19 00:15:13,295 - DEBUG - Added element: <Wire I4-T1 to R15-T0>
+2025-11-19 00:15:13,295 - DEBUG - Added element: <Wire R15-T1 to V10-T0>
+2025-11-19 00:15:13,295 - DEBUG - Added element: <Wire I4-T0 to V10-T1>
+2025-11-19 00:15:13,295 - DEBUG - Added element: <Wire R15-T0 to R16-T0>
+2025-11-19 00:15:13,295 - DEBUG - Added element: <Wire R16-T0 to R17-T0>
+2025-11-19 00:15:13,295 - DEBUG - Added element: <Wire V10-T1 to R17-T1>
+2025-11-19 00:15:13,295 - DEBUG - Added element: <Wire R17-T1 to R18-T1>
+2025-11-19 00:15:13,295 - DEBUG - Added element: <Wire R16-T1 to R18-T0>
+2025-11-19 00:15:13,295 - DEBUG - Added element: <Wire Ground-T1 to V10-T1>
+2025-11-19 00:15:13,295 - DEBUG - Node 1 positioned at (356.9, 118.1)
+2025-11-19 00:15:13,295 - DEBUG - Node 2 positioned at (308.5, 176.0)
+2025-11-19 00:15:13,295 - DEBUG - Node 4 positioned at (527.0, 116.5)
+2025-11-19 00:15:13,295 - INFO - Circuit loaded from C:/Users/hp/Desktop/Tecpap/CV_elfahsi_aymane2/Circuits_Simulator/save2.ckt
+2025-11-19 00:15:15,091 - DEBUG - Merged nodes 1 and 1 via wire.
+2025-11-19 00:15:15,091 - DEBUG - Merged nodes 2 and 2 via wire.
+2025-11-19 00:15:15,091 - DEBUG - Merged nodes 0 and 0 via wire.
+2025-11-19 00:15:15,106 - DEBUG - Merged nodes 1 and 1 via wire.
+2025-11-19 00:15:15,106 - DEBUG - Merged nodes 1 and 1 via wire.
+2025-11-19 00:15:15,106 - DEBUG - Merged nodes 0 and 0 via wire.
+2025-11-19 00:15:15,106 - DEBUG - Merged nodes 0 and 0 via wire.
+2025-11-19 00:15:15,106 - DEBUG - Merged nodes 4 and 4 via wire.
+2025-11-19 00:15:15,106 - DEBUG - Merged nodes 0 and 0 via wire.
+2025-11-19 00:15:15,106 - DEBUG - Mapped node 1 to matrix index 0
+2025-11-19 00:15:15,106 - DEBUG - Mapped node 2 to matrix index 1
+2025-11-19 00:15:15,106 - DEBUG - Mapped node 4 to matrix index 2
+2025-11-19 00:15:15,106 - DEBUG - Stamping resistor R15 between nodes 1 and 2 with conductance 0.08333333333333333
+2025-11-19 00:15:15,106 - DEBUG - Stamping resistor R16 between nodes 1 and 4 with conductance 0.3333333333333333
+2025-11-19 00:15:15,106 - DEBUG - Stamping resistor R17 between nodes 1 and 0 with conductance 0.16666666666666666
+2025-11-19 00:15:15,106 - DEBUG - Stamping resistor R18 between nodes 4 and 0 with conductance 0.3333333333333333
+2025-11-19 00:15:15,106 - DEBUG - Stamping current source I4 from node 0 to node 1 with value 6.0
+2025-11-19 00:15:15,106 - DEBUG - Stamping voltage source V10 from node 2 to node 0 with voltage 36.0
+2025-11-19 00:15:15,106 - DEBUG - Conductance Matrix A:
+[[ 0.58333333 -0.08333333 -0.33333333  0.        ]
+ [-0.08333333  0.08333333  0.          1.        ]
+ [-0.33333333  0.          0.66666667  0.        ]
+ [ 0.          1.          0.          0.        ]]
+2025-11-19 00:15:15,106 - DEBUG - Source Vector z:
+[ 6.  0.  0. 36.]
+2025-11-19 00:15:15,106 - DEBUG - Solved vector x:
+[21.6 36.  10.8 -1.2]
+2025-11-19 00:15:15,122 - DEBUG - Node Voltages: [21.6 36.  10.8]
+2025-11-19 00:15:15,122 - DEBUG - Voltage Source Currents: [-1.2]
+2025-11-19 00:15:15,122 - DEBUG - Node 1 positioned at (356.9, 118.1)
+2025-11-19 00:15:15,122 - DEBUG - Node 2 positioned at (308.5, 176.0)
+2025-11-19 00:15:15,122 - DEBUG - Node 4 positioned at (527.0, 116.5)
+2025-11-19 00:15:15,122 - DEBUG - Drew potential arrow on I4 with -21.60 V
+2025-11-19 00:15:15,122 - DEBUG - Drew potential arrow on V10 with 36.00 V
+2025-11-19 00:15:15,122 - DEBUG - Drew potential arrow on R15 with -14.40 V
+2025-11-19 00:15:15,122 - DEBUG - Drew potential arrow on R16 with 10.80 V
+2025-11-19 00:15:15,122 - DEBUG - Drew potential arrow on R17 with 21.60 V
+2025-11-19 00:15:15,122 - DEBUG - Drew potential arrow on R18 with 10.80 V
+2025-11-19 00:15:15,122 - DEBUG - Drew current arrow on element I4 with current 6.00e+00 A
+2025-11-19 00:15:15,122 - DEBUG - Drew current arrow on element V10 with current -1.20e+00 A
+2025-11-19 00:15:15,122 - DEBUG - Drew current arrow on element R15 with current -1.20e+00 A
+2025-11-19 00:15:15,122 - DEBUG - Drew current arrow on element R16 with current 3.60e+00 A
+2025-11-19 00:15:15,122 - DEBUG - Drew current arrow on element R17 with current 3.60e+00 A
+2025-11-19 00:15:15,122 - DEBUG - Drew current arrow on element R18 with current 3.60e+00 A
+2025-11-19 00:15:15,122 - DEBUG - Simulation completed successfully.
+2025-11-19 00:15:43,888 - DEBUG - Added element: <voltage_source V1, value=500.0, nodes=[1, 0]>
+2025-11-19 00:15:43,888 - DEBUG - Added element: <voltage_source V2, value=500.0, nodes=[4, 1]>
+2025-11-19 00:15:43,888 - DEBUG - Added element: <voltage_source V3, value=250.0, nodes=[1, 6]>
+2025-11-19 00:15:43,888 - DEBUG - Added element: <resistor R1, value=2000.0, nodes=[1, 0]>
+2025-11-19 00:15:43,888 - DEBUG - Added element: <resistor R2, value=1000.0, nodes=[6, 0]>
+2025-11-19 00:15:43,888 - DEBUG - Added element: <resistor R3, value=1000.0, nodes=[1, 4]>
+2025-11-19 00:15:43,904 - DEBUG - Added element: <resistor R4, value=2000.0, nodes=[1, 1]>
+2025-11-19 00:15:43,904 - DEBUG - Added element: <resistor R5, value=2000.0, nodes=[1, 0]>
+2025-11-19 00:15:43,904 - DEBUG - Added element: <resistor R6, value=1000.0, nodes=[1, 0]>
+2025-11-19 00:15:43,904 - DEBUG - Added element: <Wire V1-T0 to R6-T0>
+2025-11-19 00:15:43,904 - DEBUG - Added element: <Wire V1-T1 to R6-T1>
+2025-11-19 00:15:43,904 - DEBUG - Added element: <Wire R6-T0 to R4-T0>
+2025-11-19 00:15:43,904 - DEBUG - Added element: <Wire R4-T1 to R5-T0>
+2025-11-19 00:15:43,904 - DEBUG - Added element: <Wire R4-T1 to R3-T0>
+2025-11-19 00:15:43,904 - DEBUG - Added element: <Wire R3-T1 to V2-T0>
+2025-11-19 00:15:43,904 - DEBUG - Added element: <Wire V2-T1 to R1-T0>
+2025-11-19 00:15:43,904 - DEBUG - Added element: <Wire R1-T0 to V3-T0>
+2025-11-19 00:15:43,904 - DEBUG - Added element: <Wire V3-T1 to R2-T0>
+2025-11-19 00:15:43,904 - DEBUG - Added element: <Wire R2-T1 to R1-T1>
+2025-11-19 00:15:43,904 - DEBUG - Added element: <Wire R1-T1 to R5-T1>
+2025-11-19 00:15:43,904 - DEBUG - Added element: <Wire R5-T1 to R6-T1>
+2025-11-19 00:15:43,904 - DEBUG - Added element: <Wire Ground-T1 to V1-T1>
+2025-11-19 00:15:43,904 - DEBUG - Node 1 positioned at (405.57142857142856, 267.76190476190476)
+2025-11-19 00:15:43,904 - DEBUG - Node 4 positioned at (479.5, 274.5)
+2025-11-19 00:15:43,904 - DEBUG - Node 6 positioned at (742.0, 282.5)
+2025-11-19 00:15:43,904 - INFO - Circuit loaded from C:/Users/hp/Desktop/Tecpap/CV_elfahsi_aymane2/Circuits_Simulator/save1.ckt
+2025-11-19 00:15:46,559 - DEBUG - Merged nodes 1 and 1 via wire.
+2025-11-19 00:15:46,559 - DEBUG - Merged nodes 0 and 0 via wire.
+2025-11-19 00:15:46,559 - DEBUG - Merged nodes 1 and 1 via wire.
+2025-11-19 00:15:46,559 - DEBUG - Merged nodes 1 and 1 via wire.
+2025-11-19 00:15:46,559 - DEBUG - Merged nodes 1 and 1 via wire.
+2025-11-19 00:15:46,559 - DEBUG - Merged nodes 4 and 4 via wire.
+2025-11-19 00:15:46,559 - DEBUG - Merged nodes 1 and 1 via wire.
+2025-11-19 00:15:46,559 - DEBUG - Merged nodes 1 and 1 via wire.
+2025-11-19 00:15:46,559 - DEBUG - Merged nodes 6 and 6 via wire.
+2025-11-19 00:15:46,559 - DEBUG - Merged nodes 0 and 0 via wire.
+2025-11-19 00:15:46,559 - DEBUG - Merged nodes 0 and 0 via wire.
+2025-11-19 00:15:46,559 - DEBUG - Merged nodes 0 and 0 via wire.
+2025-11-19 00:15:46,559 - DEBUG - Merged nodes 0 and 0 via wire.
+2025-11-19 00:15:46,559 - DEBUG - Mapped node 1 to matrix index 0
+2025-11-19 00:15:46,559 - DEBUG - Mapped node 4 to matrix index 1
+2025-11-19 00:15:46,559 - DEBUG - Mapped node 6 to matrix index 2
+2025-11-19 00:15:46,559 - DEBUG - Stamping resistor R1 between nodes 1 and 0 with conductance 0.0005
+2025-11-19 00:15:46,559 - DEBUG - Stamping resistor R2 between nodes 6 and 0 with conductance 0.001
+2025-11-19 00:15:46,559 - DEBUG - Stamping resistor R3 between nodes 1 and 4 with conductance 0.001
+2025-11-19 00:15:46,559 - DEBUG - Stamping resistor R4 between nodes 1 and 1 with conductance 0.0005
+2025-11-19 00:15:46,559 - DEBUG - Stamping resistor R5 between nodes 1 and 0 with conductance 0.0005
+2025-11-19 00:15:46,559 - DEBUG - Stamping resistor R6 between nodes 1 and 0 with conductance 0.001
+2025-11-19 00:15:46,559 - DEBUG - Stamping voltage source V1 from node 1 to node 0 with voltage 500.0
+2025-11-19 00:15:46,559 - DEBUG - Stamping voltage source V2 from node 4 to node 1 with voltage 500.0
+2025-11-19 00:15:46,559 - DEBUG - Stamping voltage source V3 from node 1 to node 6 with voltage 250.0
+2025-11-19 00:15:46,559 - DEBUG - Conductance Matrix A:
+[[ 0.003 -0.001  0.     1.    -1.     1.   ]
+ [-0.001  0.001  0.     0.     1.     0.   ]
+ [ 0.     0.     0.001  0.     0.    -1.   ]
+ [ 1.     0.     0.     0.     0.     0.   ]
+ [-1.     1.     0.     0.     0.     0.   ]
+ [ 1.     0.    -1.     0.     0.     0.   ]]
+2025-11-19 00:15:46,559 - DEBUG - Source Vector z:
+[  0.   0.   0. 500. 500. 250.]
+2025-11-19 00:15:46,559 - DEBUG - Solved vector x:
+[ 5.00e+02  1.00e+03  2.50e+02 -1.25e+00 -5.00e-01  2.50e-01]
+2025-11-19 00:15:46,559 - DEBUG - Node Voltages: [ 500. 1000.  250.]
+2025-11-19 00:15:46,559 - DEBUG - Voltage Source Currents: [-1.25 -0.5   0.25]
+2025-11-19 00:15:46,559 - DEBUG - Node 1 positioned at (405.57142857142856, 267.76190476190476)
+2025-11-19 00:15:46,559 - DEBUG - Node 4 positioned at (479.5, 274.5)
+2025-11-19 00:15:46,559 - DEBUG - Node 6 positioned at (742.0, 282.5)
+2025-11-19 00:15:46,559 - DEBUG - Drew potential arrow on V1 with 500.00 V
+2025-11-19 00:15:46,559 - DEBUG - Drew potential arrow on V2 with 500.00 V
+2025-11-19 00:15:46,559 - DEBUG - Drew potential arrow on V3 with 250.00 V
+2025-11-19 00:15:46,559 - DEBUG - Drew potential arrow on R1 with 500.00 V
+2025-11-19 00:15:46,559 - DEBUG - Drew potential arrow on R2 with 250.00 V
+2025-11-19 00:15:46,559 - DEBUG - Drew potential arrow on R3 with -500.00 V
+2025-11-19 00:15:46,559 - DEBUG - Drew potential arrow on R5 with 500.00 V
+2025-11-19 00:15:46,559 - DEBUG - Drew potential arrow on R6 with 500.00 V
+2025-11-19 00:15:46,559 - DEBUG - Drew current arrow on element V1 with current -1.25e+00 A
+2025-11-19 00:15:46,559 - DEBUG - Drew current arrow on element V2 with current -5.00e-01 A
+2025-11-19 00:15:46,559 - DEBUG - Drew current arrow on element V3 with current 2.50e-01 A
+2025-11-19 00:15:46,559 - DEBUG - Drew current arrow on element R1 with current 2.50e-01 A
+2025-11-19 00:15:46,559 - DEBUG - Drew current arrow on element R2 with current 2.50e-01 A
+2025-11-19 00:15:46,559 - DEBUG - Drew current arrow on element R3 with current -5.00e-01 A
+2025-11-19 00:15:46,559 - DEBUG - Drew current arrow on element R5 with current 2.50e-01 A
+2025-11-19 00:15:46,559 - DEBUG - Drew current arrow on element R6 with current 5.00e-01 A
+2025-11-19 00:15:46,559 - DEBUG - Simulation completed successfully.
+2025-11-19 00:15:48,967 - DEBUG - Node 1 positioned at (405.57142857142856, 267.76190476190476)
+2025-11-19 00:15:48,967 - DEBUG - Node 4 positioned at (479.5, 274.5)
+2025-11-19 00:15:48,967 - DEBUG - Node 6 positioned at (742.0, 282.5)
+2025-11-19 00:15:48,967 - INFO - Reset simulation state; simulation results cleared but node map preserved for updating.
+2025-11-19 00:15:51,673 - DEBUG - Merged nodes 1 and 1 via wire.
+2025-11-19 00:15:51,673 - DEBUG - Merged nodes 0 and 0 via wire.
+2025-11-19 00:15:51,673 - DEBUG - Merged nodes 1 and 1 via wire.
+2025-11-19 00:15:51,674 - DEBUG - Merged nodes 1 and 1 via wire.
+2025-11-19 00:15:51,674 - DEBUG - Merged nodes 1 and 1 via wire.
+2025-11-19 00:15:51,674 - DEBUG - Merged nodes 4 and 4 via wire.
+2025-11-19 00:15:51,674 - DEBUG - Merged nodes 1 and 1 via wire.
+2025-11-19 00:15:51,674 - DEBUG - Merged nodes 1 and 1 via wire.
+2025-11-19 00:15:51,674 - DEBUG - Merged nodes 6 and 6 via wire.
+2025-11-19 00:15:51,674 - DEBUG - Merged nodes 0 and 0 via wire.
+2025-11-19 00:15:51,674 - DEBUG - Merged nodes 0 and 0 via wire.
+2025-11-19 00:15:51,674 - DEBUG - Merged nodes 0 and 0 via wire.
+2025-11-19 00:15:51,674 - DEBUG - Merged nodes 0 and 0 via wire.
+2025-11-19 00:15:51,674 - DEBUG - Mapped node 1 to matrix index 0
+2025-11-19 00:15:51,675 - DEBUG - Mapped node 4 to matrix index 1
+2025-11-19 00:15:51,675 - DEBUG - Mapped node 6 to matrix index 2
+2025-11-19 00:15:51,675 - DEBUG - Stamping resistor R1 between nodes 1 and 0 with conductance 0.0005
+2025-11-19 00:15:51,675 - DEBUG - Stamping resistor R2 between nodes 6 and 0 with conductance 0.001
+2025-11-19 00:15:51,675 - DEBUG - Stamping resistor R3 between nodes 1 and 4 with conductance 0.001
+2025-11-19 00:15:51,675 - DEBUG - Stamping resistor R4 between nodes 1 and 1 with conductance 0.0005
+2025-11-19 00:15:51,675 - DEBUG - Stamping resistor R5 between nodes 1 and 0 with conductance 0.0005
+2025-11-19 00:15:51,675 - DEBUG - Stamping resistor R6 between nodes 1 and 0 with conductance 0.001
+2025-11-19 00:15:51,675 - DEBUG - Stamping voltage source V1 from node 1 to node 0 with voltage 500.0
+2025-11-19 00:15:51,675 - DEBUG - Stamping voltage source V2 from node 4 to node 1 with voltage 500.0
+2025-11-19 00:15:51,675 - DEBUG - Stamping voltage source V3 from node 1 to node 6 with voltage 250.0
+2025-11-19 00:15:51,676 - DEBUG - Conductance Matrix A:
+[[ 0.003 -0.001  0.     1.    -1.     1.   ]
+ [-0.001  0.001  0.     0.     1.     0.   ]
+ [ 0.     0.     0.001  0.     0.    -1.   ]
+ [ 1.     0.     0.     0.     0.     0.   ]
+ [-1.     1.     0.     0.     0.     0.   ]
+ [ 1.     0.    -1.     0.     0.     0.   ]]
+2025-11-19 00:15:51,676 - DEBUG - Source Vector z:
+[  0.   0.   0. 500. 500. 250.]
+2025-11-19 00:15:51,676 - DEBUG - Solved vector x:
+[ 5.00e+02  1.00e+03  2.50e+02 -1.25e+00 -5.00e-01  2.50e-01]
+2025-11-19 00:15:51,677 - DEBUG - Node Voltages: [ 500. 1000.  250.]
+2025-11-19 00:15:51,677 - DEBUG - Voltage Source Currents: [-1.25 -0.5   0.25]
+2025-11-19 00:15:51,677 - DEBUG - Node 1 positioned at (405.57142857142856, 267.76190476190476)
+2025-11-19 00:15:51,677 - DEBUG - Node 4 positioned at (479.5, 274.5)
+2025-11-19 00:15:51,677 - DEBUG - Node 6 positioned at (742.0, 282.5)
+2025-11-19 00:15:51,678 - DEBUG - Drew potential arrow on V1 with 500.00 V
+2025-11-19 00:15:51,678 - DEBUG - Drew potential arrow on V2 with 500.00 V
+2025-11-19 00:15:51,678 - DEBUG - Drew potential arrow on V3 with 250.00 V
+2025-11-19 00:15:51,678 - DEBUG - Drew potential arrow on R1 with 500.00 V
+2025-11-19 00:15:51,678 - DEBUG - Drew potential arrow on R2 with 250.00 V
+2025-11-19 00:15:51,678 - DEBUG - Drew potential arrow on R3 with -500.00 V
+2025-11-19 00:15:51,678 - DEBUG - Drew potential arrow on R5 with 500.00 V
+2025-11-19 00:15:51,678 - DEBUG - Drew potential arrow on R6 with 500.00 V
+2025-11-19 00:15:51,679 - DEBUG - Drew current arrow on element V1 with current -1.25e+00 A
+2025-11-19 00:15:51,679 - DEBUG - Drew current arrow on element V2 with current -5.00e-01 A
+2025-11-19 00:15:51,679 - DEBUG - Drew current arrow on element V3 with current 2.50e-01 A
+2025-11-19 00:15:51,679 - DEBUG - Drew current arrow on element R1 with current 2.50e-01 A
+2025-11-19 00:15:51,679 - DEBUG - Drew current arrow on element R2 with current 2.50e-01 A
+2025-11-19 00:15:51,680 - DEBUG - Drew current arrow on element R3 with current -5.00e-01 A
+2025-11-19 00:15:51,680 - DEBUG - Drew current arrow on element R5 with current 2.50e-01 A
+2025-11-19 00:15:51,680 - DEBUG - Drew current arrow on element R6 with current 5.00e-01 A
+2025-11-19 00:15:51,683 - DEBUG - Simulation completed successfully.
+2025-11-19 00:22:49,608 - DEBUG - Added element: <voltage_source V1, value=3.0, nodes=[2, 1]>
+2025-11-19 00:22:49,608 - DEBUG - Added element: <voltage_source V2, value=1.0, nodes=[3, 1]>
+2025-11-19 00:22:49,609 - DEBUG - Added element: <resistor R1, value=2.0, nodes=[4, 2]>
+2025-11-19 00:22:49,609 - DEBUG - Added element: <resistor R2, value=2.0, nodes=[4, 3]>
+2025-11-19 00:22:49,610 - DEBUG - Added element: <resistor R3, value=5.0, nodes=[4, 5]>
+2025-11-19 00:22:49,610 - DEBUG - Added element: <resistor R4, value=2.0, nodes=[0, 5]>
+2025-11-19 00:22:49,611 - DEBUG - Added element: <voltage_source V3, value=2.0, nodes=[1, 0]>
+2025-11-19 00:22:49,611 - DEBUG - Added element: <Wire V1-T1 to V3-T0>
+2025-11-19 00:22:49,611 - DEBUG - Added element: <Wire V2-T1 to V3-T0>
+2025-11-19 00:22:49,611 - DEBUG - Added element: <Wire V1-T0 to R1-T1>
+2025-11-19 00:22:49,612 - DEBUG - Added element: <Wire V2-T0 to R2-T1>
+2025-11-19 00:22:49,612 - DEBUG - Added element: <Wire R1-T0 to R2-T0>
+2025-11-19 00:22:49,612 - DEBUG - Added element: <Wire R2-T0 to R3-T0>
+2025-11-19 00:22:49,612 - DEBUG - Added element: <Wire R3-T1 to R4-T1>
+2025-11-19 00:22:49,612 - DEBUG - Added element: <Wire R4-T0 to V3-T1>
+2025-11-19 00:22:49,612 - DEBUG - Added element: <Wire Ground-T1 to V3-T1>
+2025-11-19 00:22:49,612 - DEBUG - Node 2 positioned at (338.0, 244.0)
+2025-11-19 00:22:49,613 - DEBUG - Node 1 positioned at (383.85714285714283, 335.2857142857143)
+2025-11-19 00:22:49,613 - DEBUG - Node 3 positioned at (430.0, 249.0)
+2025-11-19 00:22:49,613 - DEBUG - Node 4 positioned at (461.0, 180.28571428571428)
+2025-11-19 00:22:49,613 - DEBUG - Node 5 positioned at (540.0, 347.5)
+2025-11-19 00:22:49,613 - INFO - Circuit loaded from C:/Users/hp/Desktop/Tecpap/CV_elfahsi_aymane2/Circuits_Simulator/save3.ckt
+2025-11-19 00:22:52,928 - DEBUG - Merged nodes 1 and 1 via wire.
+2025-11-19 00:22:52,928 - DEBUG - Merged nodes 1 and 1 via wire.
+2025-11-19 00:22:52,930 - DEBUG - Merged nodes 2 and 2 via wire.
+2025-11-19 00:22:52,930 - DEBUG - Merged nodes 3 and 3 via wire.
+2025-11-19 00:22:52,930 - DEBUG - Merged nodes 4 and 4 via wire.
+2025-11-19 00:22:52,930 - DEBUG - Merged nodes 4 and 4 via wire.
+2025-11-19 00:22:52,930 - DEBUG - Merged nodes 5 and 5 via wire.
+2025-11-19 00:22:52,930 - DEBUG - Merged nodes 0 and 0 via wire.
+2025-11-19 00:22:52,930 - DEBUG - Merged nodes 0 and 0 via wire.
+2025-11-19 00:22:52,930 - DEBUG - Mapped node 1 to matrix index 0
+2025-11-19 00:22:52,930 - DEBUG - Mapped node 2 to matrix index 1
+2025-11-19 00:22:52,931 - DEBUG - Mapped node 3 to matrix index 2
+2025-11-19 00:22:52,931 - DEBUG - Mapped node 4 to matrix index 3
+2025-11-19 00:22:52,931 - DEBUG - Mapped node 5 to matrix index 4
+2025-11-19 00:22:52,931 - DEBUG - Stamping resistor R1 between nodes 4 and 2 with conductance 0.5
+2025-11-19 00:22:52,931 - DEBUG - Stamping resistor R2 between nodes 4 and 3 with conductance 0.5
+2025-11-19 00:22:52,931 - DEBUG - Stamping resistor R3 between nodes 4 and 5 with conductance 0.2
+2025-11-19 00:22:52,931 - DEBUG - Stamping resistor R4 between nodes 0 and 5 with conductance 0.5
+2025-11-19 00:22:52,931 - DEBUG - Stamping voltage source V1 from node 2 to node 1 with voltage 3.0
+2025-11-19 00:22:52,932 - DEBUG - Stamping voltage source V2 from node 3 to node 1 with voltage 1.0
+2025-11-19 00:22:52,932 - DEBUG - Stamping voltage source V3 from node 1 to node 0 with voltage 2.0
+2025-11-19 00:22:52,933 - DEBUG - Conductance Matrix A:
+[[ 0.   0.   0.   0.   0.  -1.  -1.   1. ]
+ [ 0.   0.5  0.  -0.5  0.   1.   0.   0. ]
+ [ 0.   0.   0.5 -0.5  0.   0.   1.   0. ]
+ [ 0.  -0.5 -0.5  1.2 -0.2  0.   0.   0. ]
+ [ 0.   0.   0.  -0.2  0.7  0.   0.   0. ]
+ [-1.   1.   0.   0.   0.   0.   0.   0. ]
+ [-1.   0.   1.   0.   0.   0.   0.   0. ]
+ [ 1.   0.   0.   0.   0.   0.   0.   0. ]]
+2025-11-19 00:22:52,933 - DEBUG - Source Vector z:
+[0. 0. 0. 0. 0. 3. 1. 2.]
+2025-11-19 00:22:52,934 - DEBUG - Solved vector x:
+[ 2.    5.    3.    3.5   1.   -0.75  0.25 -0.5 ]
+2025-11-19 00:22:52,934 - DEBUG - Node Voltages: [2.  5.  3.  3.5 1. ]
+2025-11-19 00:22:52,934 - DEBUG - Voltage Source Currents: [-0.75  0.25 -0.5 ]
+2025-11-19 00:22:52,935 - DEBUG - Node 2 positioned at (338.0, 244.0)
+2025-11-19 00:22:52,935 - DEBUG - Node 1 positioned at (383.85714285714283, 335.2857142857143)
+2025-11-19 00:22:52,935 - DEBUG - Node 3 positioned at (430.0, 249.0)
+2025-11-19 00:22:52,935 - DEBUG - Node 4 positioned at (461.0, 180.28571428571428)
+2025-11-19 00:22:52,936 - DEBUG - Node 5 positioned at (540.0, 347.5)
+2025-11-19 00:22:52,936 - DEBUG - Drew potential arrow on V1 with 3.00 V
+2025-11-19 00:22:52,936 - DEBUG - Drew potential arrow on V2 with 1.00 V
+2025-11-19 00:22:52,936 - DEBUG - Drew potential arrow on R1 with -1.50 V
+2025-11-19 00:22:52,937 - DEBUG - Drew potential arrow on R2 with 0.50 V
+2025-11-19 00:22:52,937 - DEBUG - Drew potential arrow on R3 with 2.50 V
+2025-11-19 00:22:52,937 - DEBUG - Drew potential arrow on R4 with -1.00 V
+2025-11-19 00:22:52,937 - DEBUG - Drew potential arrow on V3 with 2.00 V
+2025-11-19 00:22:52,937 - DEBUG - Drew current arrow on element V1 with current -7.50e-01 A
+2025-11-19 00:22:52,937 - DEBUG - Drew current arrow on element V2 with current 2.50e-01 A
+2025-11-19 00:22:52,937 - DEBUG - Drew current arrow on element R1 with current -7.50e-01 A
+2025-11-19 00:22:52,937 - DEBUG - Drew current arrow on element R2 with current 2.50e-01 A
+2025-11-19 00:22:52,937 - DEBUG - Drew current arrow on element R3 with current 5.00e-01 A
+2025-11-19 00:22:52,937 - DEBUG - Drew current arrow on element R4 with current -5.00e-01 A
+2025-11-19 00:22:52,937 - DEBUG - Drew current arrow on element V3 with current -5.00e-01 A
+2025-11-19 00:22:52,943 - DEBUG - Simulation completed successfully.
+2025-11-19 00:22:59,605 - DEBUG - Cleared all selections
+2025-11-19 00:22:59,605 - DEBUG - Started box selection
+2025-11-19 00:23:02,378 - DEBUG - Cleared all selections
+2025-11-19 00:23:02,378 - DEBUG - Highlighted component Ground
+2025-11-19 00:23:02,378 - DEBUG - Selected component Ground
+2025-11-19 00:23:02,378 - DEBUG - Started dragging components
+2025-11-19 00:23:04,544 - DEBUG - Unhighlighted component Ground
+2025-11-19 00:23:04,544 - DEBUG - Cleared all selections
+2025-11-19 00:23:04,544 - DEBUG - Highlighted component V3
+2025-11-19 00:23:04,544 - DEBUG - Selected component V3
+2025-11-19 00:23:04,544 - DEBUG - Started dragging components
+2025-11-19 00:23:05,552 - DEBUG - Highlighted component V1
+2025-11-19 00:23:05,552 - DEBUG - Selected component V1
+2025-11-19 00:23:05,552 - DEBUG - Started dragging components
+2025-11-19 00:23:05,951 - DEBUG - Highlighted component V2
+2025-11-19 00:23:05,951 - DEBUG - Selected component V2
+2025-11-19 00:23:05,951 - DEBUG - Started dragging components
+2025-11-19 00:23:06,876 - DEBUG - Removed element: <voltage_source V3, value=2.0, nodes=[1, 0]>
+2025-11-19 00:23:06,876 - DEBUG - Deleted wire <Wire V1-T1 to V3-T0>
+2025-11-19 00:23:06,877 - DEBUG - Deleted wire <Wire V2-T1 to V3-T0>
+2025-11-19 00:23:06,877 - DEBUG - Deleted wire <Wire R4-T0 to V3-T1>
+2025-11-19 00:23:06,877 - DEBUG - Deleted wire <Wire Ground-T1 to V3-T1>
+2025-11-19 00:23:06,877 - DEBUG - Removed element: <Wire V1-T1 to V3-T0>
+2025-11-19 00:23:06,877 - DEBUG - Removed element: <Wire V2-T1 to V3-T0>
+2025-11-19 00:23:06,877 - DEBUG - Removed element: <Wire R4-T0 to V3-T1>
+2025-11-19 00:23:06,877 - DEBUG - Removed element: <Wire Ground-T1 to V3-T1>
+2025-11-19 00:23:06,878 - DEBUG - Deleted component V3
+2025-11-19 00:23:06,878 - DEBUG - Removed element: <voltage_source V1, value=3.0, nodes=[2, 1]>
+2025-11-19 00:23:06,878 - DEBUG - Deleted wire <Wire V1-T0 to R1-T1>
+2025-11-19 00:23:06,878 - DEBUG - Removed element: <Wire V1-T0 to R1-T1>
+2025-11-19 00:23:06,879 - DEBUG - Deleted component V1
+2025-11-19 00:23:06,879 - DEBUG - Removed element: <voltage_source V2, value=1.0, nodes=[3, 1]>
+2025-11-19 00:23:06,879 - DEBUG - Deleted wire <Wire V2-T0 to R2-T1>
+2025-11-19 00:23:06,879 - DEBUG - Removed element: <Wire V2-T0 to R2-T1>
+2025-11-19 00:23:06,879 - DEBUG - Deleted component V2
+2025-11-19 00:23:06,879 - DEBUG - Node 4 positioned at (461.0, 180.28571428571428)
+2025-11-19 00:23:06,879 - DEBUG - Node 2 positioned at (339.0, 206.0)
+2025-11-19 00:23:06,880 - DEBUG - Node 3 positioned at (431.0, 218.0)
+2025-11-19 00:23:06,880 - DEBUG - Node 5 positioned at (540.0, 347.5)
+2025-11-19 00:23:07,904 - DEBUG - Highlighted component R1
+2025-11-19 00:23:07,905 - DEBUG - Selected component R1
+2025-11-19 00:23:07,905 - DEBUG - Started dragging components
+2025-11-19 00:23:08,385 - DEBUG - Highlighted component R2
+2025-11-19 00:23:08,385 - DEBUG - Selected component R2
+2025-11-19 00:23:08,385 - DEBUG - Started dragging components
+2025-11-19 00:23:09,217 - DEBUG - Highlighted component R3
+2025-11-19 00:23:09,217 - DEBUG - Selected component R3
+2025-11-19 00:23:09,217 - DEBUG - Started dragging components
+2025-11-19 00:23:10,066 - DEBUG - Highlighted component R4
+2025-11-19 00:23:10,066 - DEBUG - Selected component R4
+2025-11-19 00:23:10,066 - DEBUG - Started dragging components
+2025-11-19 00:23:10,905 - DEBUG - Highlighted component Ground
+2025-11-19 00:23:10,905 - DEBUG - Selected component Ground
+2025-11-19 00:23:10,905 - DEBUG - Started dragging components
+2025-11-19 00:23:12,034 - DEBUG - Removed element: <resistor R1, value=2.0, nodes=[4, 2]>
+2025-11-19 00:23:12,034 - DEBUG - Deleted wire <Wire R1-T0 to R2-T0>
+2025-11-19 00:23:12,034 - DEBUG - Removed element: <Wire R1-T0 to R2-T0>
+2025-11-19 00:23:12,034 - DEBUG - Deleted component R1
+2025-11-19 00:23:12,034 - DEBUG - Removed element: <resistor R2, value=2.0, nodes=[4, 3]>
+2025-11-19 00:23:12,034 - DEBUG - Deleted wire <Wire R2-T0 to R3-T0>
+2025-11-19 00:23:12,034 - DEBUG - Removed element: <Wire R2-T0 to R3-T0>
+2025-11-19 00:23:12,034 - DEBUG - Deleted component R2
+2025-11-19 00:23:12,034 - DEBUG - Removed element: <resistor R3, value=5.0, nodes=[4, 5]>
+2025-11-19 00:23:12,034 - DEBUG - Deleted wire <Wire R3-T1 to R4-T1>
+2025-11-19 00:23:12,034 - DEBUG - Removed element: <Wire R3-T1 to R4-T1>
+2025-11-19 00:23:12,034 - DEBUG - Deleted component R3
+2025-11-19 00:23:12,034 - DEBUG - Removed element: <resistor R4, value=2.0, nodes=[0, 5]>
+2025-11-19 00:23:12,034 - DEBUG - Deleted component R4
+2025-11-19 00:23:12,034 - DEBUG - Deleted component Ground
+2025-11-19 00:23:13,737 - INFO - Reset simulation state; simulation results cleared but node map preserved for updating.
+2025-11-19 00:23:14,153 - INFO - Reset simulation state; simulation results cleared but node map preserved for updating.
+2025-11-19 00:23:14,299 - INFO - Reset simulation state; simulation results cleared but node map preserved for updating.
