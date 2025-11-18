@@ -295,7 +295,7 @@ class CircuitGUI(tk.Tk):
         self.compute_and_display_currents(self.last_node_voltages, self.last_source_currents)
 
     def reset_simulation_state(self):
-        logging.info("Resetting entire circuit - deleting ALL components, wires, and simulation data")
+        logging.info("Resetting entire circuit - deleting ALL components, wires, arrows, and simulation data")
 
         if hasattr(self, "last_node_voltages"):
             del self.last_node_voltages
@@ -309,12 +309,20 @@ class CircuitGUI(tk.Tk):
         self.node_labels.clear()
 
         for comp in self.components:
+            for item_id in comp.get("voltage_arrows", []):
+                self.canvas.delete(item_id)
+            for item_id in comp.get("current_arrows", []):
+                self.canvas.delete(item_id)
             if comp.get('element'):
                 self.simulator.remove_element(comp['element'])
             for it in comp.get('canvas_items', []):
                 self.canvas.delete(it)
 
         for wire in self.wires:
+            for item_id in wire.voltage_arrows:
+                self.canvas.delete(item_id)
+            for item_id in wire.current_arrows:
+                self.canvas.delete(item_id)
             self.canvas.delete(wire.canvas_id)
             self.simulator.remove_element(wire)
 
@@ -327,10 +335,11 @@ class CircuitGUI(tk.Tk):
             if isinstance(window, tk.Toplevel):
                 window.destroy()
 
+        self.canvas.delete("all")
         self.canvas.update()
 
-        logging.info("Reset complete: entire circuit deleted - all components, wires, and simulation data cleared")
-        messagebox.showinfo("Reset Complete", "Entire circuit has been deleted.")
+        logging.info("Reset complete: EVERYTHING deleted - circuit, arrows, labels, simulation data")
+        messagebox.showinfo("Reset Complete", "Everything has been deleted.")
 
 
 
