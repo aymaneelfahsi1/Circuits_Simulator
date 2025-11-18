@@ -86,6 +86,9 @@ class CircuitSimulator:
                     all_nodes.add(self.uf.find(node))
 
         floating_nodes = all_nodes - connected
+        if floating_nodes:
+            logging.warning(f"Detected floating nodes: {floating_nodes}")
+            return floating_nodes
         return None
 
     def stamp_matrices(self):
@@ -110,7 +113,10 @@ class CircuitSimulator:
         for e in self.elements:
             if e.element_type == 'resistor':
                 r = e.value
-                if abs(r) < 1e-15:
+                if r <= 0:
+                    logging.error(f"Resistor {e.name} has non-positive resistance: {r} Ohms. Using 1 Ohm instead.")
+                    r = 1.0
+                elif abs(r) < 1e-15:
                     logging.warning(f"Resistor {e.name} has near-zero resistance; replacing with 1e-12 Ohms.")
                     r = 1e-12
                 g = 1.0 / r

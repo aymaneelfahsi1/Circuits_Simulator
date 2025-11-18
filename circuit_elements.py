@@ -1,4 +1,6 @@
 from imports import *
+import logging
+
 class CircuitElement:
     """
     Represents a circuit element (resistor, voltage source, current source, wire).

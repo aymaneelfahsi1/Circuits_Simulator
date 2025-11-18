@@ -84,9 +84,9 @@ class CircuitGUI(tk.Tk):
         self.canvas.bind("<B1-Motion>", self.on_drag)
         self.canvas.bind("<Double-Button-1>", self.on_double_click)
 
-        self.canvas.bind("<KeyPress-r>", lambda e: self.rotate_selected(90))
-        self.canvas.bind("<KeyPress-Delete>", lambda e: self.delete_selected())
-        self.canvas.bind("<KeyPress-Escape>", lambda e: self.cancel_actions())
+        self.canvas.bind("<r>", lambda e: self.rotate_selected(90))
+        self.canvas.bind("<Delete>", lambda e: self.delete_selected())
+        self.canvas.bind("<Escape>", lambda e: self.cancel_actions())
         self.canvas.focus_set()
 
     def rotate_points(self, points, angle_deg):
@@ -387,6 +387,13 @@ class CircuitGUI(tk.Tk):
                     term2_idx=wire_data["term2_idx"],
                     canvas_id=wire_id
                 )
+
+                eA = comp1.get('element')
+                eB = comp2.get('element')
+                nodeA = eA.nodes[wire_data["term1_idx"]] if eA else 0
+                nodeB = eB.nodes[wire_data["term2_idx"]] if eB else 0
+                wire_element.nodes = [nodeA, nodeB]
+
                 self.simulator.add_element(wire_element)
                 self.wires.append(wire_element)
             self.update_wires()
@@ -575,9 +582,6 @@ class CircuitGUI(tk.Tk):
             self.highlight_component(comp_dict, True)
 
     def edit_component_value(self, comp_dict):
-        """
-        Prompt the user to change the numeric value of a selected component.
-        """
         elem = comp_dict['element']
         unit = {'resistor': 'Ω', 'voltage_source': 'V', 'current_source': 'A'}.get(elem.element_type, '')
         new_val = simpledialog.askfloat(
@@ -586,6 +590,10 @@ class CircuitGUI(tk.Tk):
             initialvalue=elem.value
         )
         if new_val is not None:
+            if elem.element_type == 'resistor' and new_val <= 0:
+                messagebox.showerror("Invalid Value", "Resistor value must be positive!")
+                logging.error(f"Attempted to set negative/zero resistance for {elem.name}")
+                return
             elem.value = new_val
             logging.debug(f"Updated {elem.name} to new value: {new_val}")
             for item_id in comp_dict['canvas_items']:
@@ -744,9 +752,14 @@ class CircuitGUI(tk.Tk):
 
         wire_name = f"Wire{len([e for e in self.simulator.elements if e.element_type == 'wire']) + 1}"
         wire_element = Wire(name=wire_name, comp1=compA, term1_idx=termA, comp2=compB, term2_idx=termB, canvas_id=wire_id)
+
+        final_nodeA = eA.nodes[termA] if eA else 0
+        final_nodeB = eB.nodes[termB] if eB else 0
+        wire_element.nodes = [final_nodeA, final_nodeB]
+
         self.simulator.add_element(wire_element)
         self.wires.append(wire_element)
-        logging.debug(f"Created and added wire: {wire_element}")
+        logging.debug(f"Created and added wire: {wire_element} with nodes {wire_element.nodes}")
 
     def find_terminal(self, item_id):
         """
@@ -778,7 +791,6 @@ class CircuitGUI(tk.Tk):
             x1, y1 = w.comp1['abs_terminals'][w.term1_idx]
             x2, y2 = w.comp2['abs_terminals'][w.term2_idx]
             self.canvas.coords(w.canvas_id, x1, y1, x2, y2)
-            logging.debug(f"Updated wire {w} coordinates to ({x1}, {y1}) - ({x2}, {y2})")
         self.compute_node_positions()
 
     def clear_selection(self):
@@ -839,8 +851,6 @@ class CircuitGUI(tk.Tk):
     def terminal_click(self, event):
         if not (hasattr(self, "last_node_voltages") and hasattr(self, "last_node_map")):
             return
-        if not hasattr(self, "last_node_voltages") or not hasattr(self, "last_node_map"):
-            return
 
         clicked_items = self.canvas.find_withtag("current")
         if not clicked_items:
@@ -866,6 +876,18 @@ class CircuitGUI(tk.Tk):
 
     def simulate(self):
         self.clear_component_arrows()
+
+        if not self.simulator.elements:
+            messagebox.showerror("Simulation Error", "No circuit elements to simulate!")
+            logging.error("Simulation failed: No elements in circuit.")
+            return
+
+        non_wire_elements = [e for e in self.simulator.elements if e.element_type != 'wire']
+        if not non_wire_elements:
+            messagebox.showerror("Simulation Error", "Circuit contains only wires!")
+            logging.error("Simulation failed: No active components.")
+            return
+
         for e in self.simulator.elements:
             if e.element_type in ['wire']:
                 continue
@@ -1057,21 +1079,19 @@ class CircuitGUI(tk.Tk):
 
             comp['current'] = current
 
-            if current > 0:
-                direction = 1
-                color = "green"
-            elif current < 0:
-                direction = -1
-                color = "orange"
-            else:
+            if abs(current) < 1e-12:
                 continue
 
-            pos1 = comp['abs_terminals'][0]
-            pos2 = comp['abs_terminals'][1]
-            base_angle = math.atan2(pos2[1] - pos1[1], pos2[0] - pos1[0])
-            if direction == -1:
-                base_angle += math.pi
-            arrow_ids = self.draw_arrow_with_label(pos1, pos2, color, 2, 30, "I = {:.2e} A", abs(current))
+            if current > 0:
+                start_pos = comp['abs_terminals'][0]
+                end_pos = comp['abs_terminals'][1]
+                color = "green"
+            else:
+                start_pos = comp['abs_terminals'][1]
+                end_pos = comp['abs_terminals'][0]
+                color = "orange"
+
+            arrow_ids = self.draw_arrow_with_label(start_pos, end_pos, color, 2, 30, "I = {:.2e} A", abs(current))
             comp.setdefault('current_arrows', []).extend(arrow_ids)
             logging.debug(f"Drew current arrow on element {elem.name} with current {current:.2e} A")
 
