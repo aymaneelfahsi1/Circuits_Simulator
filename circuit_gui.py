@@ -272,14 +272,12 @@ class CircuitGUI(tk.Tk):
             logging.debug("Cancelled ongoing actions and cleared selection box")
 
     def reset_simulation_state(self):
-        logging.info("Reset simulation state button clicked - starting cleanup")
+        logging.info("Resetting entire simulation - clearing all results and closing windows")
 
         if hasattr(self, "last_node_voltages"):
             del self.last_node_voltages
-            logging.debug("Deleted last_node_voltages")
         if hasattr(self, "last_node_map"):
             del self.last_node_map
-            logging.debug("Deleted last_node_map")
 
         for comp in self.components:
             if comp.get("terminal_dot_ids"):
@@ -289,44 +287,33 @@ class CircuitGUI(tk.Tk):
         for label_id in self.node_labels.values():
             self.canvas.delete(label_id)
         self.node_labels.clear()
-        logging.debug(f"Cleared {len(self.node_labels)} node labels")
 
-        arrow_count = 0
         for comp in self.components:
-            voltage_arrows = comp.get("voltage_arrows", [])
-            current_arrows = comp.get("current_arrows", [])
-
-            for item_id in voltage_arrows:
+            for item_id in comp.get("voltage_arrows", []):
                 self.canvas.delete(item_id)
-                arrow_count += 1
             comp["voltage_arrows"] = []
-
-            for item_id in current_arrows:
+            for item_id in comp.get("current_arrows", []):
                 self.canvas.delete(item_id)
-                arrow_count += 1
             comp["current_arrows"] = []
+            if "current" in comp:
+                del comp["current"]
 
-        logging.debug(f"Cleared {arrow_count} component arrows")
-
-        wire_arrow_count = 0
         for wire in self.wires:
             for item_id in wire.voltage_arrows:
                 self.canvas.delete(item_id)
-                wire_arrow_count += 1
             wire.voltage_arrows.clear()
-
             for item_id in wire.current_arrows:
                 self.canvas.delete(item_id)
-                wire_arrow_count += 1
             wire.current_arrows.clear()
 
-        logging.debug(f"Cleared {wire_arrow_count} wire arrows")
+        for window in self.winfo_children():
+            if isinstance(window, tk.Toplevel):
+                window.destroy()
 
-        self.compute_node_positions()
         self.canvas.update()
 
-        logging.info(f"Reset complete: cleared {arrow_count + wire_arrow_count} total arrows and labels from canvas")
-        messagebox.showinfo("Reset Complete", "Simulation state has been reset successfully.")
+        logging.info("Reset complete: all simulation results, arrows, labels, and result windows cleared")
+        messagebox.showinfo("Reset Complete", "All simulation results have been cleared.")
 
 
 
